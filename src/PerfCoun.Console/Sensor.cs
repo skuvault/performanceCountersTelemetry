@@ -17,25 +17,25 @@ namespace PerfCoun.Console
 		protected CancellationTokenSource _sensorCts;
 		protected Task _sensorTask;
 		protected CancellationToken _sensorCt;
-		protected ConcurrentQueue< ConcurrentDictionary< string, float > > countersQueue{ get; set; }
-		protected List< ISensorObserver > observers;
+		protected ConcurrentQueue<ConcurrentDictionary<string, float>> _countersQueue;
+		protected List< ISensorObserver > _observers;
 
 		public void AddObservers( params ISensorObserver[] observers )
 		{
 			foreach( var sensorObserver in observers )
 			{
-				this.observers.Add( sensorObserver );
+				this._observers.Add( sensorObserver );
 			}
 		}
 
 		public void RemoveObserver( ISensorObserver o )
 		{
-			this.observers.Remove( o );
+			this._observers.Remove( o );
 		}
 
 		public void NotifyObservers( ConcurrentDictionary< string, float > counters )
 		{
-			foreach( var observer in this.observers )
+			foreach( var observer in this._observers )
 			{
 				observer.SendCounters( counters );
 			}
@@ -45,7 +45,8 @@ namespace PerfCoun.Console
 		{
 			this._counters = counters;
 			this._periodMs = periodMs;
-			this.countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
+			this._countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
+			this._observers = new List<ISensorObserver>();
 		}
 
 		public static string GetCounterId( PerformanceCounter x )

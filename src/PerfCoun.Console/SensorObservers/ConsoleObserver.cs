@@ -1,8 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using PerfCoun.Console.SensorClients;
 
-namespace PerfCoun.Console.SensorClients
+namespace PerfCoun.Console.SensorObservers
 {
 	public class ConsoleObserver: ISensorObserver
 	{
@@ -16,7 +17,7 @@ namespace PerfCoun.Console.SensorClients
 		public ConsoleObserver()
 		{
 			this._buffer = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
-			this._period = 100;
+			this._period = 500;
 			this.cts = new CancellationTokenSource();
 			this.ct = this.cts.Token;
 			this._maxInstancesToProcess = 10;
@@ -33,7 +34,7 @@ namespace PerfCoun.Console.SensorClients
 							res.WriteLineCounter();
 						}
 					}
-					Task.Delay( this._period );
+					Task.Delay(this._period).Wait(this.ct);
 				}
 			}
 				);
