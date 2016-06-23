@@ -10,6 +10,10 @@ namespace PerfCoun.Console
 	{
 		static void Main(string[] args)
 		{
+			var s = new Sensor(500, PerformanceCounterHelper.GetCounter());
+			s.Start();
+			System.Console.ReadLine();
+			s.Stop();
 		}
 	}
 }

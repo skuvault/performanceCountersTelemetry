@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -70,9 +72,36 @@ namespace PerfCoun.Console
 					while( this._started && !this._sensorCt.IsCancellationRequested )
 					{
 						var counters = this.GetCounters();
+						//countersQueue.Enqueue(counters);//todo: to reader/ writer
+						PerformanceCounterHelper.WriteLineCounter( counters ); //replace to reader writer;
 						Task.Delay( this._periodMs ).Wait( this._sensorCt );
 					}
 				} );
+			}
+		}
+	}
+
+	public static class PerformanceCounterHelper
+	{
+		public static PerformanceCounter GetCounter( string category = "Память CLR .NET", string instance = "_Global_", string counterName = "% времени в GC" )
+		{
+			var counterCategory = Enumerable.First( Enumerable.Where( PerformanceCounterCategory.GetCategories(), x => x.CategoryName.Contains( category ) ) );
+			var counter = Enumerable.First( Enumerable.Where( counterCategory.GetCounters( instance ), x => x.CounterName.Contains( counterName ) ) );
+			return counter;
+		}
+
+		public static PerformanceCounter GetCounter2( string category = ".NET CLR Memory", string instance = "_Global_", string counterName = "% Time in GC" )
+		{
+			var counterCategory = Enumerable.First( Enumerable.Where( PerformanceCounterCategory.GetCategories(), x => x.CategoryName.Contains( category ) ) );
+			var counter = Enumerable.First( Enumerable.Where( counterCategory.GetCounters( instance ), x => x.CounterName.Contains( counterName ) ) );
+			return counter;
+		}
+
+		public static void WriteLineCounter( this IDictionary< string, float > counters )
+		{
+			foreach( var cc in counters )
+			{
+				System.Console.WriteLine( string.Format( "{0}-{1}", cc.Key, cc.Value ) );
 			}
 		}
 	}
