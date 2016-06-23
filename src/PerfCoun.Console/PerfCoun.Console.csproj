@@ -43,10 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ISensorObservable.cs" />
     <Compile Include="Sensor.cs" />
     <Compile Include="PerformanceCounterHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SensorObservers\ConsoleObserver.cs" />
+    <Compile Include="SensorObservers\ISensorObserver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using PerfCoun.Console.SensorClients;
 
 namespace PerfCoun.Console
 {
-	public class Sensor
+	public class Sensor: ISensorObservable
 	{
 		protected PerformanceCounter[] _counters{ get; set; }
 		protected int _periodMs{ get; set; }
@@ -16,6 +18,25 @@ namespace PerfCoun.Console
 		protected Task _sensorTask;
 		protected CancellationToken _sensorCt;
 		protected ConcurrentQueue< ConcurrentDictionary< string, float > > countersQueue{ get; set; }
+		protected List< ISensorObserver > observers;
+
+		public void AddObserver( ISensorObserver o )
+		{
+			this.observers.Add( o );
+		}
+
+		public void RemoveObserver( ISensorObserver o )
+		{
+			this.observers.Remove( o );
+		}
+
+		public void NotifyObservers( ConcurrentDictionary< string, float > counters )
+		{
+			foreach( var observer in this.observers )
+			{
+				observer.SendCounters(counters);
+			}
+		}
 
 		public Sensor( int periodMs, params PerformanceCounter[] counters )
 		{
@@ -70,8 +91,7 @@ namespace PerfCoun.Console
 					while( this._started && !this._sensorCt.IsCancellationRequested )
 					{
 						var counters = this.GetCounters();
-						//countersQueue.Enqueue(counters);//todo: to reader/ writer
-						PerformanceCounterHelper.WriteLineCounter( counters ); //replace to reader writer;
+						this.NotifyObservers( counters );
 						Task.Delay( this._periodMs ).Wait( this._sensorCt );
 					}
 				} );
