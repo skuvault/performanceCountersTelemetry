@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PerfCoun.Console.SensorClients;
 
 namespace PerfCoun.Console
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main( string[] args )
 		{
-			var s = new Sensor(1000, PerformanceCounterHelper.GetCounter());
+			var s = new Sensor( 1000, PerformanceCounterHelper.GetCounter() );
+			s.AddObservers(new ConsoleObserver());
+
 			s.Start();
 			System.Console.ReadLine();
 			s.Stop();

@@ -5,8 +5,8 @@ namespace PerfCoun.Console
 {
 	interface ISensorObservable
 	{
-		void AddObserver(ISensorObserver o);
-		void RemoveObserver(ISensorObserver o);
-		void NotifyObservers(ConcurrentDictionary<string, float> counters);
+		void AddObservers( params ISensorObserver[] observers );
+		void RemoveObserver( ISensorObserver o );
+		void NotifyObservers( ConcurrentDictionary< string, float > counters );
 	}
 }

@@ -20,9 +20,12 @@ namespace PerfCoun.Console
 		protected ConcurrentQueue< ConcurrentDictionary< string, float > > countersQueue{ get; set; }
 		protected List< ISensorObserver > observers;
 
-		public void AddObserver( ISensorObserver o )
+		public void AddObservers( params ISensorObserver[] observers )
 		{
-			this.observers.Add( o );
+			foreach( var sensorObserver in observers )
+			{
+				this.observers.Add( sensorObserver );
+			}
 		}
 
 		public void RemoveObserver( ISensorObserver o )
@@ -34,7 +37,7 @@ namespace PerfCoun.Console
 		{
 			foreach( var observer in this.observers )
 			{
-				observer.SendCounters(counters);
+				observer.SendCounters( counters );
 			}
 		}
 

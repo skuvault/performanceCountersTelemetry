@@ -12,25 +12,25 @@ namespace PerfCoun.Console
 			var counter = Enumerable.First( Enumerable.Where( counterCategory.GetCounters( instance ), x => x.CounterName.Contains( counterName ) ) );
 			return counter;
 		}
-		public static PerformanceCounter GetCounter(string category = "Память CLR .NET", string instance = "iisexpress", string counterName = "% времени в GC")
+
+		public static PerformanceCounter GetCounter( string category = "Память CLR .NET", string instance = "iisexpress", string counterName = "% времени в GC" )
 		{
 			PerformanceCounter res = null;
-			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where(x => x.CategoryName.Contains("Память") && x.CategoryName.Contains("NET")).ToList();
-			foreach (PerformanceCounterCategory category2 in performanceCounterCategories)
+			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName.Contains( "Память" ) && x.CategoryName.Contains( "NET" ) ).ToList();
+			foreach( PerformanceCounterCategory category2 in performanceCounterCategories )
 			{
-				if (category2.CategoryType != PerformanceCounterCategoryType.SingleInstance)
+				if( category2.CategoryType != PerformanceCounterCategoryType.SingleInstance )
 				{
 					string[] names = category2.GetInstanceNames();
-					var enumerable = names.Where(x=>x.Contains("iis") && !x.Contains("tray")).ToList();
-					foreach (string name in enumerable)
+					var enumerable = names.Where( x => x.Contains( "iis" ) && !x.Contains( "tray" ) ).ToList();
+					foreach( string name in enumerable )
 					{
-						var performanceCounters = category2.GetCounters(name).Where(y => y.CategoryName.Contains(".NET"));
-						foreach (var counter in performanceCounters)
+						var performanceCounters = category2.GetCounters( name ).Where( y => y.CategoryName.Contains( ".NET" ) );
+						foreach( var counter in performanceCounters )
 						{
-							if(counter.CounterName.Contains("времени"))
+							if( counter.CounterName.Contains( "времени" ) )
 							{
-
-								System.Console.WriteLine(counter.CounterName);
+								System.Console.WriteLine( counter.CounterName );
 								res = counter;
 							}
 						}
@@ -38,9 +38,9 @@ namespace PerfCoun.Console
 				}
 				else
 				{
-					foreach (var counter in category2.GetCounters())
+					foreach( var counter in category2.GetCounters() )
 					{
-						System.Console.WriteLine(counter.CounterName);
+						System.Console.WriteLine( counter.CounterName );
 					}
 				}
 			}
