@@ -7,7 +7,6 @@ namespace PerfCoun.Console
 {
 	public static class PerformanceCounterHelper
 	{
-
 		public static IEnumerable< PerformanceCounter > GetCounters( List< string[] > counters, Action< string, string, string > notFound )
 		{
 			foreach( var stringse in counters )
@@ -22,21 +21,21 @@ namespace PerfCoun.Console
 		public static PerformanceCounter GetCounter( string category = "Память CLR .NET", string instance = "iisexpress", string counterName = "% времени в GC" )
 		{
 			PerformanceCounter res = null;
-			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName.Contains(category)  ).ToList();
-			foreach( PerformanceCounterCategory category2 in performanceCounterCategories )
+			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName == category ).ToList();
+			foreach( var performanceCounterCategory in performanceCounterCategories )
 			{
-				if( category2.CategoryType != PerformanceCounterCategoryType.SingleInstance )
+				if( performanceCounterCategory.CategoryType != PerformanceCounterCategoryType.SingleInstance )
 				{
-					string[] names = category2.GetInstanceNames();
-					var enumerable = names.Where( x => x.Contains(instance) ).ToList();
-					foreach( string name in enumerable )
+					var instanceNames = performanceCounterCategory.GetInstanceNames();
+					var targetInstances = instanceNames.Where( x => x == instance ).ToList();
+					foreach( var targetInstance in targetInstances )
 					{
-						var performanceCounters = category2.GetCounters( name ).Where( y => y.CategoryName.Contains(category) );
+						var performanceCounters = performanceCounterCategory.GetCounters( targetInstance ).Where( y => y.CategoryName == category );
 						foreach( var counter in performanceCounters )
 						{
-							if( counter.CounterName.Contains(counterName) )
+							if( counter.CounterName == counterName )
 							{
-								System.Console.WriteLine( counter.CounterName );
+								System.Console.WriteLine( "Found: {0},{1},{2}", category, instance, counterName );
 								res = counter;
 							}
 						}
@@ -44,22 +43,13 @@ namespace PerfCoun.Console
 				}
 				else
 				{
-					foreach( var counter in category2.GetCounters() )
+					foreach( var counter in performanceCounterCategory.GetCounters() )
 					{
 						System.Console.WriteLine( counter.CounterName );
 					}
 				}
 			}
 			return res;
-			//
-			//	var performanceCounterCategories = PerformanceCounterCategory.GetCategories();
-			//	var counterCategories = performanceCounterCategories.Where( x => x.CategoryName.Contains(category));
-			//	var counterCategory = counterCategories.First();
-			//	var counters = counterCategory.GetCounters("");
-			//	var performanceCounters = counters.Where(y=>y.CounterName =="% времени в GC" );
-			//	var performanceCounters2 = counterCategory.GetCounters("iisexpress").Where(y => y.InstanceName == "iisexpress");
-			//	var counter = Enumerable.Where(performanceCounters, x => x.CounterName.Contains(counterName)).First();
-			//	return counter;
 		}
 
 		public static PerformanceCounter GetCounter2( string category = ".NET CLR Memory", string instance = "_Global_", string counterName = "% Time in GC" )
