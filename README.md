@@ -12,7 +12,13 @@ Arguments example:
 Start -cs "Ram CLR .NET;iisexpress;% Time in GC; iis-ram|Processor information ;_Total;% Processor usage" -ds "Console|Telegraf"
 ```
 
-Then app starts receive all the specified counters and send them to the destinations.
+After start app receives all the specified counters and send them to destinations.
+
+Help 
+``` 
+-?
+```
+
 
 ##Development
 * Please have a chat about any big features before submitting PR's

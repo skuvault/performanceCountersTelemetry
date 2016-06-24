@@ -16,6 +16,7 @@ namespace PerfCoun.Console.Arguments
 		[ ArgActionMethod, ArgDescription( "Adds the two operands" ) ]
 		public void AddCounter( Counter args )
 		{
+			// todo: implement
 			//Console.WriteLine(args.Category + args.Instance);
 		}
 
