@@ -1,18 +1,23 @@
-﻿using PerfCoun.Console.SensorClients;
-using PerfCoun.Console.SensorObservers;
+﻿using System.Collections.Generic;
+using PerfCoun.Console.Arguments;
+using PowerArgs;
 
 namespace PerfCoun.Console
 {
 	class Program
 	{
+		private static readonly List< Sensor > _sensors = new List< Sensor >();
+
 		static void Main( string[] args )
 		{
-			var s = new Sensor( 1000, PerformanceCounterHelper.GetCounter() );
-			s.AddObservers(new ConsoleObserver());
-
-			s.Start();
+			Args.InvokeAction< ConsoleCommands >( args );
+			System.Console.WriteLine( "Press any key to Exit" );
 			System.Console.ReadLine();
-			s.Stop();
+		}
+
+		public static void AddSensorTasks( params Sensor[] s )
+		{
+			_sensors.AddRange( s );
 		}
 	}
 }

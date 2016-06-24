@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,6 +12,17 @@ namespace PerfCoun.Console
 			var counterCategory = Enumerable.First( Enumerable.Where( PerformanceCounterCategory.GetCategories(), x => x.CategoryName.Contains( category ) ) );
 			var counter = Enumerable.First( Enumerable.Where( counterCategory.GetCounters( instance ), x => x.CounterName.Contains( counterName ) ) );
 			return counter;
+		}
+
+		public static IEnumerable< PerformanceCounter > GetCounters( List< string[] > counters, Action< string, string, string > notFound )
+		{
+			foreach( var stringse in counters )
+			{
+				var performanceCounter = GetCounter( stringse[ 0 ], stringse[ 1 ], stringse[ 2 ] );
+				if( performanceCounter == null )
+					notFound( stringse[ 0 ], stringse[ 1 ], stringse[ 2 ] );
+				yield return performanceCounter;
+			}
 		}
 
 		public static PerformanceCounter GetCounter( string category = "Память CLR .NET", string instance = "iisexpress", string counterName = "% времени в GC" )

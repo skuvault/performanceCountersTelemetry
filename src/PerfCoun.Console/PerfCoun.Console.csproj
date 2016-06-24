@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PowerArgs, Version=2.7.1.0, Culture=neutral, PublicKeyToken=26a276264bbd55b8, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\PowerArgs.2.7.1.0\lib\net45\PowerArgs.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Arguments\Command.cs" />
     <Compile Include="ISensorObservable.cs" />
     <Compile Include="Sensor.cs" />
     <Compile Include="PerformanceCounterHelper.cs" />

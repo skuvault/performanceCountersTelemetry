@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using PerfCoun.Console.SensorClients;
+using PerfCoun.Console.SensorObservers;
 
 namespace PerfCoun.Console
 {

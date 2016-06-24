@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using PerfCoun.Console.SensorClients;
 
 namespace PerfCoun.Console.SensorObservers
 {
