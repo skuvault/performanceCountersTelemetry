@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegraf;
 
-namespace PerfCoun.Console.SensorObservers
+namespace CountersHub.SensorObservers
 {
 	public class TelegrafObserver: ISensorObserver
 	{
@@ -46,7 +46,7 @@ namespace PerfCoun.Console.SensorObservers
 				ConcurrentDictionary< string, float > res;
 				for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 				{
-					res.WriteLineCounter();
+					PerformanceCounterHelper.WriteLineCounter( res );
 				}
 			}
 		}

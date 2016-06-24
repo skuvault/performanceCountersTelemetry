@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
-using PerfCoun.Console.SensorObservers;
+using CountersHub;
+using CountersHub.SensorObservers;
+using CountersHub.Sensors;
 using PowerArgs;
 
 namespace PerfCoun.Console.Arguments

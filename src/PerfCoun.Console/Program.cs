@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CountersHub.Sensors;
 using PerfCoun.Console.Arguments;
 using PowerArgs;
 

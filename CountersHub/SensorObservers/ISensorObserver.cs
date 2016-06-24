@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace PerfCoun.Console.SensorObservers
+namespace CountersHub.SensorObservers
 {
 	public interface ISensorObserver
 	{

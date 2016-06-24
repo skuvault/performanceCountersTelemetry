@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using PerfCoun.Console.SensorObservers;
+using CountersHub.SensorObservers;
 
-namespace PerfCoun.Console
+namespace CountersHub.Sensors
 {
 	public class Sensor: ISensorObservable
 	{

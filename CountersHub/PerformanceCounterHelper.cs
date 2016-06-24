@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using CountersHub.Sensors;
 
-namespace PerfCoun.Console
+namespace CountersHub
 {
 	public static class PerformanceCounterHelper
 	{
@@ -55,7 +56,7 @@ namespace PerfCoun.Console
 				{
 					foreach( var counter in performanceCounterCategory.GetCounters() )
 					{
-						System.Console.WriteLine( counter.CounterName );
+						System.Console.WriteLine( ( string )counter.CounterName );
 					}
 				}
 			}
