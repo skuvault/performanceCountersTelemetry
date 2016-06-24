@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Palantiri.Console.Arguments;
 using Palantiri.Sensors;
-using PerfCoun.Console.Arguments;
 using PowerArgs;
 
-namespace PerfCoun.Console
+namespace Palantiri.Console
 {
 	class Program
 	{
@@ -12,8 +13,13 @@ namespace PerfCoun.Console
 		static void Main( string[] args )
 		{
 			Args.InvokeAction< ConsoleCommands >( args );
-			System.Console.WriteLine( "Press any key to Exit" );
-			System.Console.ReadLine();
+			System.Console.WriteLine( "Enter 'Exit' key to Exit" );
+			var cmd = "";
+			while( cmd == null || !cmd.Equals( "Exit", StringComparison.InvariantCultureIgnoreCase ) )
+			{
+
+				cmd = System.Console.ReadLine();
+			}
 		}
 
 		public static void AddSensorTasks( params Sensor[] s )

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Palantiri;
 using Palantiri.SensorObservers;
 using Palantiri.Sensors;
 using PowerArgs;
 
-namespace PerfCoun.Console.Arguments
+namespace Palantiri.Console.Arguments
 {
 	[ ArgExceptionBehavior( ArgExceptionPolicy.StandardExceptionHandling ) ]
 	public class ConsoleCommands
