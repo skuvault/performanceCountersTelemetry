@@ -7,8 +7,8 @@
     <ProjectGuid>{C5683E45-1C13-46C1-AF80-09A266004CA7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PerfCoun.Console</RootNamespace>
-    <AssemblyName>PerfCoun.Console</AssemblyName>
+    <RootNamespace>Palantiri.Console</RootNamespace>
+    <AssemblyName>Palantiri.Console</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

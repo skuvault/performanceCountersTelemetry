@@ -7,8 +7,8 @@
     <ProjectGuid>{A39BFCF8-DBE0-4A07-8CC3-3FFBB6C7E937}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CountersHub</RootNamespace>
-    <AssemblyName>CountersHub</AssemblyName>
+    <RootNamespace>Palantiri</RootNamespace>
+    <AssemblyName>Palantiri</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
