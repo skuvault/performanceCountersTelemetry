@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegraf;
 
 namespace CountersHub.SensorObservers
 {
@@ -79,7 +78,7 @@ namespace CountersHub.SensorObservers
 			var systemName = sysName.Replace( ".", "-" );
 
 			var node = id.Replace( ".", "-" ).Replace( "SkuVault-", "" );
-			var metricsConfig = new MetricsConfig
+			var metricsConfig = new Telegraf.MetricsConfig
 			{
 				Tags = new Dictionary< string, string >()
 				{
@@ -89,7 +88,7 @@ namespace CountersHub.SensorObservers
 				}
 			};
 
-			Metrics.Configure( metricsConfig );
+			Telegraf.Metrics.Configure(metricsConfig);
 		}
 	}
 }
