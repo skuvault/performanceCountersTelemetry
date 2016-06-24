@@ -10,14 +10,15 @@ namespace PerfCoun.Console
 {
 	public class Sensor: ISensorObservable
 	{
-		protected PerformanceCounter[] _counters{ get; set; }
+		protected Tuple< PerformanceCounter, string >[] _counters{ get; set; }
 		protected int _periodMs{ get; set; }
 		protected bool _started{ get; set; }
 		protected object _startLock = new object();
 		protected CancellationTokenSource _sensorCts;
 		protected Task _sensorTask;
 		protected CancellationToken _sensorCt;
-		protected ConcurrentQueue<ConcurrentDictionary<string, float>> _countersQueue;
+		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _countersQueue;
+		protected ConcurrentDictionary< string, string > _countersAlias;
 		protected List< ISensorObserver > _observers;
 
 		public void AddObservers( params ISensorObserver[] observers )
@@ -41,12 +42,12 @@ namespace PerfCoun.Console
 			}
 		}
 
-		public Sensor( int periodMs, params PerformanceCounter[] counters )
+		public Sensor( int periodMs, params Tuple< PerformanceCounter, string >[] counters )
 		{
 			this._counters = counters;
 			this._periodMs = periodMs;
 			this._countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
-			this._observers = new List<ISensorObserver>();
+			this._observers = new List< ISensorObserver >();
 		}
 
 		public static string GetCounterId( PerformanceCounter x )
@@ -54,14 +55,22 @@ namespace PerfCoun.Console
 			return x.CategoryName + "_" + x.CounterName + "_" + x.InstanceName;
 		}
 
-		public ConcurrentDictionary< string, float > GetCounters()
+		public string GetCounterAlias( PerformanceCounter x )
+		{
+			string alias;
+			if( this._countersAlias.TryGetValue( GetCounterId( x ), out alias ) )
+				return alias;
+			return null;
+		}
+
+		public ConcurrentDictionary< string, float > GetCounterValues()
 		{
 			var counters = new ConcurrentDictionary< string, float >();
 			Parallel.ForEach( this._counters, x =>
 			{
 				try
 				{
-					counters.AddOrUpdate( GetCounterId( x ), x.NextValue(), ( cid, y ) => x.NextValue() );
+					counters.AddOrUpdate( x.Item2, x.Item1.NextValue(), ( cid, y ) => x.Item1.NextValue() );
 				}
 				catch( Exception )
 				{
@@ -94,7 +103,7 @@ namespace PerfCoun.Console
 				{
 					while( this._started && !this._sensorCt.IsCancellationRequested )
 					{
-						var counters = this.GetCounters();
+						var counters = this.GetCounterValues();
 						this.NotifyObservers( counters );
 						Task.Delay( this._periodMs ).Wait( this._sensorCt );
 					}

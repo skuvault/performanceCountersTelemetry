@@ -7,14 +7,24 @@ namespace PerfCoun.Console
 {
 	public static class PerformanceCounterHelper
 	{
-		public static IEnumerable< PerformanceCounter > GetCounters( List< string[] > counters, Action< string, string, string > notFound )
+		public static IEnumerable< Tuple< PerformanceCounter, string > > GetCounters( List< string[] > counters, Action< string, string, string > notFound )
 		{
-			foreach( var stringse in counters )
+			foreach( var counterNameAndAlias in counters )
 			{
-				var performanceCounter = GetCounter( stringse[ 0 ], stringse[ 1 ], stringse[ 2 ] );
+				var performanceCounter = GetCounter( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
+
 				if( performanceCounter == null )
-					notFound( stringse[ 0 ], stringse[ 1 ], stringse[ 2 ] );
-				yield return performanceCounter;
+					notFound( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
+
+				string alias = null;
+				if( performanceCounter != null )
+				{
+					alias = Sensor.GetCounterId( performanceCounter );
+					if( counterNameAndAlias.Length > 3 && !string.IsNullOrWhiteSpace( counterNameAndAlias[ 3 ] ) )
+						alias = counterNameAndAlias[ 3 ];
+				}
+
+				yield return Tuple.Create( performanceCounter, alias );
 			}
 		}
 

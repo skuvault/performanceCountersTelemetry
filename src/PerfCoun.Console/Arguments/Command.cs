@@ -27,7 +27,7 @@ namespace PerfCoun.Console.Arguments
 			{
 				System.Console.WriteLine( "Not found: {0},{1},{2}", x, y, z );
 			};
-
+			
 			var sensor = new Sensor( 1000, PerformanceCounterHelper.GetCounters( countersParsed, notifyNotFound ).ToArray() );
 			sensor.AddObservers( observersParsed.Select( x => x.CreateObserver() ).Where( y => y != null ).ToArray() );
 			sensor.Start();
