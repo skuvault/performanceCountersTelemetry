@@ -7,12 +7,6 @@ namespace PerfCoun.Console
 {
 	public static class PerformanceCounterHelper
 	{
-		public static PerformanceCounter GetCounter4( string category = "Память CLR .NET", string instance = "_Global_", string counterName = "% времени в GC" )
-		{
-			var counterCategory = Enumerable.First( Enumerable.Where( PerformanceCounterCategory.GetCategories(), x => x.CategoryName.Contains( category ) ) );
-			var counter = Enumerable.First( Enumerable.Where( counterCategory.GetCounters( instance ), x => x.CounterName.Contains( counterName ) ) );
-			return counter;
-		}
 
 		public static IEnumerable< PerformanceCounter > GetCounters( List< string[] > counters, Action< string, string, string > notFound )
 		{
@@ -28,19 +22,19 @@ namespace PerfCoun.Console
 		public static PerformanceCounter GetCounter( string category = "Память CLR .NET", string instance = "iisexpress", string counterName = "% времени в GC" )
 		{
 			PerformanceCounter res = null;
-			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName.Contains( "Память" ) && x.CategoryName.Contains( "NET" ) ).ToList();
+			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName.Contains(category)  ).ToList();
 			foreach( PerformanceCounterCategory category2 in performanceCounterCategories )
 			{
 				if( category2.CategoryType != PerformanceCounterCategoryType.SingleInstance )
 				{
 					string[] names = category2.GetInstanceNames();
-					var enumerable = names.Where( x => x.Contains( "iis" ) && !x.Contains( "tray" ) ).ToList();
+					var enumerable = names.Where( x => x.Contains(instance) ).ToList();
 					foreach( string name in enumerable )
 					{
-						var performanceCounters = category2.GetCounters( name ).Where( y => y.CategoryName.Contains( ".NET" ) );
+						var performanceCounters = category2.GetCounters( name ).Where( y => y.CategoryName.Contains(category) );
 						foreach( var counter in performanceCounters )
 						{
-							if( counter.CounterName.Contains( "времени" ) )
+							if( counter.CounterName.Contains(counterName) )
 							{
 								System.Console.WriteLine( counter.CounterName );
 								res = counter;
