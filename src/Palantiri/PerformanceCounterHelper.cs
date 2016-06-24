@@ -14,7 +14,7 @@ namespace Palantiri
 			{
 				var performanceCounter = GetCounter( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
 
-				if( performanceCounter == null )
+				if( performanceCounter == null && notFound != null )
 					notFound( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
 
 				string alias = null;

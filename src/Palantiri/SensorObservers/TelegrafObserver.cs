@@ -49,6 +49,7 @@ namespace Palantiri.SensorObservers
 				for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 				{
 					var values = res.ToDictionary( x => x.Key, y => ( object )y.Value );
+					if (values.Any())
 					Metrics.Record( "app-sys-counters", values );
 				}
 			}

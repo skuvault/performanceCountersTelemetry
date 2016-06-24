@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Palantiri.SensorObservers;
 using Palantiri.Sensors;
@@ -16,6 +17,11 @@ namespace Palantiri.Console.Arguments
 		public void AddCounter( Counter args )
 		{
 			// todo: implement
+			List< string[] > counter = new List< string[] >() { new[] { args.Category, args.Name, args.Instance, args.Alias } };
+			var counters = PerformanceCounterHelper.GetCounters(counter, null).ToArray();
+
+			var task = Program.GetSensorTask();
+			task.AddCounters(counters);
 			//Console.WriteLine(args.Category + args.Instance);
 		}
 
@@ -29,7 +35,7 @@ namespace Palantiri.Console.Arguments
 			{
 				System.Console.WriteLine( "Not found: {0},{1},{2}", x, y, z );
 			};
-			
+
 			var sensor = new Sensor( 1000, PerformanceCounterHelper.GetCounters( countersParsed, notifyNotFound ).ToArray() );
 			sensor.AddObservers( observersParsed.Select( x => x.CreateObserver() ).Where( y => y != null ).ToArray() );
 			sensor.Start();
@@ -39,14 +45,17 @@ namespace Palantiri.Console.Arguments
 
 	public class Counter
 	{
-		[ ArgRequired, ArgDescription( "Category" ), ArgExample( ".NET CLR Memory", "Category name" ), ArgPosition( 1 ) ]
-		public double Category{ get; set; }
+		[ ArgRequired, ArgDescription( "Category" ), ArgShortcut( "c" ), ArgExample( ".NET CLR Memory", "Category name" ), ArgPosition( 1 ) ]
+		public string Category{ get; set; }
 
-		[ ArgRequired, ArgDescription( "Name" ), ArgPosition( 2 ) ]
-		public double Name{ get; set; }
+		[ ArgRequired, ArgDescription( "Name" ), ArgShortcut( "n" ), ArgPosition( 2 ) ]
+		public string Name{ get; set; }
 
-		[ ArgRequired, ArgDescription( "Instance" ), ArgPosition( 3 ) ]
-		public double Instance{ get; set; }
+		[ ArgRequired, ArgDescription( "Instance" ), ArgShortcut( "i" ), ArgPosition( 3 ) ]
+		public string Instance{ get; set; }
+
+		[ ArgRequired, ArgDescription( "Alias" ), ArgShortcut( "a" ), ArgPosition( 3 ) ]
+		public string Alias{ get; set; }
 	}
 
 	public class Counters

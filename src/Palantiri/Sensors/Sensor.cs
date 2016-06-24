@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Palantiri.SensorObservers;
@@ -109,6 +110,14 @@ namespace Palantiri.Sensors
 					}
 				} );
 			}
+		}
+
+		public void AddCounters( Tuple< PerformanceCounter, string >[] counters )
+		{
+			var temp = this._counters.ToList();
+			temp.AddRange( counters );
+			var tempArray = temp.ToArray();
+			this._counters = tempArray;
 		}
 	}
 }
