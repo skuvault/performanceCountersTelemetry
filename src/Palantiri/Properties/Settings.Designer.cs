@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Palantir.Properties {
+namespace Palantiri.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

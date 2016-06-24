@@ -56,9 +56,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Palantir\Palantir.csproj">
+    <ProjectReference Include="..\Palantiri\Palantiri.csproj">
       <Project>{a39bfcf8-dbe0-4a07-8cc3-3ffbb6c7e937}</Project>
-      <Name>Palantir</Name>
+      <Name>Palantiri</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

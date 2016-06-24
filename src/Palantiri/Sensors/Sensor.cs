@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Palantir.SensorObservers;
+using Palantiri.SensorObservers;
 
-namespace Palantir.Sensors
+namespace Palantiri.Sensors
 {
 	public class Sensor: ISensorObservable
 	{

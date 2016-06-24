@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace Palantir.SensorObservers
+namespace Palantiri.SensorObservers
 {
 	public interface ISensorObserver
 	{

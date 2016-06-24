@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Palantir.Sensors;
+using Palantiri.Sensors;
 using PerfCoun.Console.Arguments;
 using PowerArgs;
 

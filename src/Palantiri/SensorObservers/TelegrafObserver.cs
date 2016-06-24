@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Palantir.Properties;
+using Palantiri.Properties;
 using Telegraf;
 
-namespace Palantir.SensorObservers
+namespace Palantiri.SensorObservers
 {
 	public class TelegrafObserver: ISensorObserver
 	{

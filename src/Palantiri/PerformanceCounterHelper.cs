@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Palantir.Sensors;
+using Palantiri.Sensors;
 
-namespace Palantir
+namespace Palantiri
 {
 	public static class PerformanceCounterHelper
 	{
