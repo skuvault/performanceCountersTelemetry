@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using CountersHub.SensorObservers;
+using Palantir.SensorObservers;
 
-namespace CountersHub.Sensors
+namespace Palantir.Sensors
 {
 	interface ISensorObservable
 	{

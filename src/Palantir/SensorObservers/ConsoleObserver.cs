@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CountersHub.SensorObservers
+namespace Palantir.SensorObservers
 {
 	public class ConsoleObserver: ISensorObserver
 	{

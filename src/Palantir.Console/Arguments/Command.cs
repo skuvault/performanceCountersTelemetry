@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using CountersHub;
-using CountersHub.SensorObservers;
-using CountersHub.Sensors;
+using Palantir;
+using Palantir.SensorObservers;
+using Palantir.Sensors;
 using PowerArgs;
 
 namespace PerfCoun.Console.Arguments

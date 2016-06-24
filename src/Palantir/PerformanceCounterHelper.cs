@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using CountersHub.Sensors;
+using Palantir.Sensors;
 
-namespace CountersHub
+namespace Palantir
 {
 	public static class PerformanceCounterHelper
 	{
@@ -25,7 +25,8 @@ namespace CountersHub
 						alias = counterNameAndAlias[ 3 ];
 				}
 
-				yield return Tuple.Create( performanceCounter, alias );
+				if( performanceCounter != null )
+					yield return Tuple.Create( performanceCounter, alias );
 			}
 		}
 
@@ -46,7 +47,7 @@ namespace CountersHub
 						{
 							if( counter.CounterName == counterName )
 							{
-								System.Console.WriteLine( "Found: {0},{1},{2}", category, instance, counterName );
+								Console.WriteLine( "Found: {0},{1},{2}", category, instance, counterName );
 								res = counter;
 							}
 						}
@@ -56,7 +57,7 @@ namespace CountersHub
 				{
 					foreach( var counter in performanceCounterCategory.GetCounters() )
 					{
-						System.Console.WriteLine( ( string )counter.CounterName );
+						Console.WriteLine( ( string )counter.CounterName );
 					}
 				}
 			}
@@ -74,7 +75,7 @@ namespace CountersHub
 		{
 			foreach( var cc in counters )
 			{
-				System.Console.WriteLine( string.Format( "{0}={1}", cc.Key, cc.Value ) );
+				Console.WriteLine( string.Format( "{0}={1}", cc.Key, cc.Value ) );
 			}
 		}
 	}

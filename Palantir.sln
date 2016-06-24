@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountersHub", "src\CountersHub\CountersHub.csproj", "{A39BFCF8-DBE0-4A07-8CC3-3FFBB6C7E937}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Palantir", "src\Palantir\Palantir.csproj", "{A39BFCF8-DBE0-4A07-8CC3-3FFBB6C7E937}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountersHub.Console", "src\CountersHub.Console\CountersHub.Console.csproj", "{C5683E45-1C13-46C1-AF80-09A266004CA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Palantir.Console", "src\Palantir.Console\Palantir.Console.csproj", "{C5683E45-1C13-46C1-AF80-09A266004CA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
