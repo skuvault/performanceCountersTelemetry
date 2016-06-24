@@ -1,7 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CountersHub.Properties;
+using Telegraf;
 
 namespace CountersHub.SensorObservers
 {
@@ -16,7 +19,7 @@ namespace CountersHub.SensorObservers
 
 		public TelegrafObserver()
 		{
-			SetupStatistics.Init( "environemnt", "sysName", "id" );
+			SetupStatistics.Init( Settings.Default.TelegrafEnv, Settings.Default.TelegrafSysName, Settings.Default.TelegrafId );
 			this._buffer = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
 			this._period = 500;
 			this.cts = new CancellationTokenSource();
@@ -45,7 +48,8 @@ namespace CountersHub.SensorObservers
 				ConcurrentDictionary< string, float > res;
 				for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 				{
-					PerformanceCounterHelper.WriteLineCounter( res );
+					var values = res.ToDictionary( x => x.Key, y => ( object )y.Value );
+					Metrics.Record( "app-sys-counters", values );
 				}
 			}
 		}
@@ -78,7 +82,7 @@ namespace CountersHub.SensorObservers
 			var systemName = sysName.Replace( ".", "-" );
 
 			var node = id.Replace( ".", "-" ).Replace( "SkuVault-", "" );
-			var metricsConfig = new Telegraf.MetricsConfig
+			var metricsConfig = new MetricsConfig
 			{
 				Tags = new Dictionary< string, string >()
 				{
@@ -88,7 +92,7 @@ namespace CountersHub.SensorObservers
 				}
 			};
 
-			Telegraf.Metrics.Configure(metricsConfig);
+			Metrics.Configure( metricsConfig );
 		}
 	}
 }
