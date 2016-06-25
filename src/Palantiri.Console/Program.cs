@@ -15,7 +15,7 @@ namespace Palantiri.Console
 		{
 			Args.InvokeAction< ConsoleCommands >( args );
 			System.Console.WriteLine( "Enter 'Exit' key to Exit" );
-			var cmd = "";
+			string cmd = null;
 			while( cmd == null || !cmd.Equals( "Exit", StringComparison.InvariantCultureIgnoreCase ) )
 			{
 				cmd = System.Console.ReadLine();
@@ -39,27 +39,6 @@ namespace Palantiri.Console
 		public static Sensor GetSensorTask()
 		{
 			return _sensors.First();
-		}
-	}
-
-	public static class Helper
-	{
-
-		public static IEnumerable<string> SplitAsArgs(this string str,
-										  Func<char, bool> controller)
-		{
-			int nextPiece = 0;
-
-			for (int c = 0; c < str.Length; c++)
-			{
-				if (controller(str[c]))
-				{
-					yield return str.Substring(nextPiece, c - nextPiece);
-					nextPiece = c + 1;
-				}
-			}
-
-			yield return str.Substring(nextPiece);
 		}
 	}
 }

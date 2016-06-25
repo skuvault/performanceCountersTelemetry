@@ -8,14 +8,20 @@ namespace Palantiri
 {
 	public static class PerformanceCounterHelper
 	{
-		public static IEnumerable< Tuple< PerformanceCounter, string > > GetCounters( List< string[] > counters, Action< string, string, string > notFound )
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="counters">[Category,Instance,CounterName]</param>
+		/// <param name="onNotFound"></param>
+		/// <returns></returns>
+		public static IEnumerable< Tuple< PerformanceCounter, string > > GetCounters( IEnumerable< string[] > counters, Action< string, string, string > onNotFound )
 		{
 			foreach( var counterNameAndAlias in counters )
 			{
 				var performanceCounter = GetCounter( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
 
-				if( performanceCounter == null && notFound != null )
-					notFound( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
+				if( performanceCounter == null && onNotFound != null )
+					onNotFound( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
 
 				string alias = null;
 				if( performanceCounter != null )
@@ -30,7 +36,7 @@ namespace Palantiri
 			}
 		}
 
-		public static PerformanceCounter GetCounter( string category = "Память CLR .NET", string instance = "iisexpress", string counterName = "% времени в GC" )
+		public static PerformanceCounter GetCounter( string category = "Память CLR .NET", string counterName = "% времени в GC", string instance = "iisexpress" )
 		{
 			PerformanceCounter res = null;
 			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName == category ).ToList();

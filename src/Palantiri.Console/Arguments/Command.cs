@@ -43,8 +43,14 @@ namespace Palantiri.Console.Arguments
 		public void Start( Counters args )
 		{
 			string[] globalSeparator = { args.GlobalSeparator };
-			string[] parametersSeparator = { args.ParametersSeparator };
-			var countersParsed = args.CountersList.Split( globalSeparator, StringSplitOptions.None ).Select( countersFullName => countersFullName.Split( parametersSeparator, StringSplitOptions.None ) ).ToList();
+			var countersSerialized = args.CountersList.Split( globalSeparator, StringSplitOptions.None ).ToList();
+
+			var countersDeserialized = countersSerialized.Select( x =>
+			{
+				var convert = Args.Convert( x );
+				return Args.Parse< Counter >( convert );
+			} );
+
 			var observersParsed = args.DestinationsList.Split( globalSeparator, StringSplitOptions.None );
 
 			Action< string, string, string > notifyNotFound = ( x, y, z ) =>
@@ -52,7 +58,7 @@ namespace Palantiri.Console.Arguments
 				System.Console.WriteLine( "Not found: {0},{1},{2}", x, y, z );
 			};
 
-			var sensor = new Sensor( 1000, PerformanceCounterHelper.GetCounters( countersParsed, notifyNotFound ).ToArray() );
+			var sensor = new Sensor( 1000, PerformanceCounterHelper.GetCounters( countersDeserialized.Select( x => ( new[] { x.Category, x.Name, x.Instance, x.Alias } ).ToList().Where( y => y != null ).ToArray() ), notifyNotFound ).ToArray() );
 			sensor.AddObservers( observersParsed.Select( x => x.CreateObserver() ).Where( y => y != null ).ToArray() );
 			sensor.Start();
 			Program.AddSensorTasks( sensor );
@@ -70,7 +76,7 @@ namespace Palantiri.Console.Arguments
 		[ ArgRequired, ArgDescription( "Instance" ), ArgShortcut( "i" ), ArgPosition( 3 ) ]
 		public string Instance{ get; set; }
 
-		[ ArgRequired, ArgDescription( "Alias" ), ArgShortcut( "a" ), ArgPosition( 3 ) ]
+		[ ArgDescription( "Alias" ), ArgShortcut( "a" ), ArgPosition( 3 ) ]
 		public string Alias{ get; set; }
 	}
 
@@ -85,7 +91,7 @@ namespace Palantiri.Console.Arguments
 		[ ArgRequired, ArgDescription( "Counters/Destination Separator" ), ArgShortcut( "gs" ), ArgExample( ";", "Counters/Destination Separator" ), ArgPosition( 3 ) ]
 		public string GlobalSeparator{ get; set; }
 
-		[ ArgRequired, ArgDescription( "Counters/Destination parameters Separator" ), ArgShortcut( "ps" ), ArgExample( ",", "Counters parameters separator" ), ArgPosition( 4 ) ]
-		public string ParametersSeparator{ get; set; }
+		//[ ArgRequired, ArgDescription( "Counters/Destination parameters Separator" ), ArgShortcut( "ps" ), ArgExample( ",", "Counters parameters separator" ), ArgPosition( 4 ) ]
+		//public string ParametersSeparator{ get; set; }
 	}
 }
