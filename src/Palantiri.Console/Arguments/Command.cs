@@ -42,8 +42,10 @@ namespace Palantiri.Console.Arguments
 		[ ArgActionMethod, ArgDescription( "Start Sensor" ) ]
 		public void Start( Counters args )
 		{
-			var countersParsed = args.CountersList.Split( '|' ).Select( countersFullName => countersFullName.Split( ';' ) ).ToList();
-			var observersParsed = args.DestinationsList.Split( '|' );
+			string[] globalSeparator = { args.GlobalSeparator };
+			string[] parametersSeparator = { args.ParametersSeparator };
+			var countersParsed = args.CountersList.Split( globalSeparator, StringSplitOptions.None ).Select( countersFullName => countersFullName.Split( parametersSeparator, StringSplitOptions.None ) ).ToList();
+			var observersParsed = args.DestinationsList.Split( globalSeparator, StringSplitOptions.None );
 
 			Action< string, string, string > notifyNotFound = ( x, y, z ) =>
 			{
@@ -79,5 +81,11 @@ namespace Palantiri.Console.Arguments
 
 		[ ArgRequired, ArgDescription( "Destinations" ), ArgShortcut( "ds" ), ArgExample( "Console|Telegraf", "Counters destinations" ), ArgPosition( 2 ) ]
 		public string DestinationsList{ get; set; }
+
+		[ ArgRequired, ArgDescription( "Counters/Destination Separator" ), ArgShortcut( "gs" ), ArgExample( ";", "Counters/Destination Separator" ), ArgPosition( 3 ) ]
+		public string GlobalSeparator{ get; set; }
+
+		[ ArgRequired, ArgDescription( "Counters/Destination parameters Separator" ), ArgShortcut( "ps" ), ArgExample( ",", "Counters parameters separator" ), ArgPosition( 4 ) ]
+		public string ParametersSeparator{ get; set; }
 	}
 }
