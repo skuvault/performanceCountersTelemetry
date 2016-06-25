@@ -112,12 +112,30 @@ namespace Palantiri.Sensors
 			}
 		}
 
+		public void RemoveCounters( Tuple< PerformanceCounter, string >[] counters, Action< string > onRemoved )
+		{
+			lock( this._startLock )
+			{
+				var temp = this._counters.ToList();
+				foreach( var counter in counters )
+				{
+					temp.Remove(counter);
+					onRemoved(counter.Item2);
+				}
+				var tempArray = temp.ToArray();
+				this._counters = tempArray;
+			}
+		}
+
 		public void AddCounters( Tuple< PerformanceCounter, string >[] counters )
 		{
-			var temp = this._counters.ToList();
-			temp.AddRange( counters );
-			var tempArray = temp.ToArray();
-			this._counters = tempArray;
+			lock( this._startLock )
+			{
+				var temp = this._counters.ToList();
+				temp.AddRange( counters );
+				var tempArray = temp.ToArray();
+				this._counters = tempArray;
+			}
 		}
 	}
 }

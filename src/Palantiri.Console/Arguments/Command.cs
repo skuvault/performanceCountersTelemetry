@@ -13,16 +13,30 @@ namespace Palantiri.Console.Arguments
 		[ HelpHook, ArgShortcut( "-?" ), ArgDescription( "Shows this help" ) ]
 		public bool Help{ get; set; }
 
-		[ ArgActionMethod, ArgDescription( "Adds the two operands" ) ]
+		[ ArgActionMethod, ArgDescription( "Adds counter" ) ]
 		public void AddCounter( Counter args )
 		{
-			// todo: implement
-			List< string[] > counter = new List< string[] >() { new[] { args.Category, args.Name, args.Instance, args.Alias } };
-			var counters = PerformanceCounterHelper.GetCounters(counter, null).ToArray();
+			var counter = new List< string[] >() { new[] { args.Category, args.Name, args.Instance, args.Alias } };
+			var counters = PerformanceCounterHelper.GetCounters( counter, null ).ToArray();
 
 			var task = Program.GetSensorTask();
-			task.AddCounters(counters);
-			//Console.WriteLine(args.Category + args.Instance);
+			task.AddCounters( counters );
+		}
+
+		[ ArgActionMethod, ArgDescription( "Remove counter" ) ]
+		public void RemoveCounter( Counter args )
+		{
+			var counter = new List< string[] >() { new[] { args.Category, args.Name, args.Instance, args.Alias } };
+			var counters = PerformanceCounterHelper.GetCounters( counter, null ).ToArray();
+
+			var task = Program.GetSensorTask();
+
+			Action< string > onRemoved = alias =>
+			{
+				System.Console.WriteLine( "Removed: {0}", alias );
+			};
+
+			task.RemoveCounters( counters, onRemoved );
 		}
 
 		[ ArgActionMethod, ArgDescription( "Start Sensor" ) ]
