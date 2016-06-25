@@ -4,7 +4,7 @@ A C# client to performance counters.
 
 ##Usage
 
-#Start
+*Start
 App should be started with parameters to catch system counters. Multiple instances cab be started in one machine. Each instance scans specified counters and sends them to specified destinations. 
 
 Arguments example:
