@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -77,11 +78,16 @@ namespace Palantiri
 			return counter;
 		}
 
-		public static void WriteLineCounter( this IDictionary< string, float > counters )
+		public static void WriteLineCounterToConsole( this IDictionary< string, float > counters )
+		{
+			WriteLineCounter( counters, Console.WriteLine );
+		}
+
+		public static void WriteLineCounter( this IDictionary< string, float > counters, Action< string > writer )
 		{
 			foreach( var cc in counters )
 			{
-				Console.WriteLine( string.Format( "{0}={1}", cc.Key, cc.Value ) );
+				writer( string.Format( "{0}={1}", cc.Key, cc.Value ) );
 			}
 		}
 	}

@@ -82,5 +82,17 @@ namespace Palantiri.Properties {
                 this["TelegrafStatisticsPort"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("output.txt")]
+        public string FileOberverPath {
+            get {
+                return ((string)(this["FileOberverPath"]));
+            }
+            set {
+                this["FileOberverPath"] = value;
+            }
+        }
     }
 }

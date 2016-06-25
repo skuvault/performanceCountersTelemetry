@@ -1,10 +1,12 @@
 ﻿using System.Collections.Concurrent;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Palantiri.Properties;
 
 namespace Palantiri.SensorObservers
 {
-	public class ConsoleObserver: ISensorObserver
+	public class FileObserver: ISensorObserver
 	{
 		protected readonly Task _consoleWriter;
 		protected readonly int _period;
@@ -12,8 +14,9 @@ namespace Palantiri.SensorObservers
 		protected readonly CancellationTokenSource cts;
 		protected readonly CancellationToken ct;
 		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _buffer;
+		private StreamWriter _file;
 
-		public ConsoleObserver()
+		public FileObserver()
 		{
 			this._buffer = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
 			this._period = 500;
@@ -23,6 +26,7 @@ namespace Palantiri.SensorObservers
 
 			this._consoleWriter = Task.Factory.StartNew( () =>
 			{
+				this._file = new StreamWriter( Settings.Default.FileOberverPath );
 				while( !this.ct.IsCancellationRequested )
 				{
 					if( this._buffer != null )
@@ -30,7 +34,8 @@ namespace Palantiri.SensorObservers
 						ConcurrentDictionary< string, float > res;
 						for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 						{
-							PerformanceCounterHelper.WriteLineCounterToConsole( res );
+							PerformanceCounterHelper.WriteLineCounter( res, x => this._file.WriteLine( x ) );
+							this._file.Flush();
 						}
 					}
 					Task.Delay( this._period ).Wait( this.ct );
@@ -39,10 +44,11 @@ namespace Palantiri.SensorObservers
 				);
 		}
 
-		~ConsoleObserver()
+		~FileObserver()
 		{
 			if( this._consoleWriter != null && this.cts != null && this.cts.IsCancellationRequested )
 				this.cts.Cancel();
+			this._file.Close();
 		}
 
 		public void SendCounters( ConcurrentDictionary< string, float > counters )
