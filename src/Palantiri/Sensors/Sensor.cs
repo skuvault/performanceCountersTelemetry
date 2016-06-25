@@ -119,8 +119,8 @@ namespace Palantiri.Sensors
 				var temp = this._counters.ToList();
 				foreach( var counter in counters )
 				{
-					temp.Remove(counter);
-					onRemoved(counter.Item2);
+					temp.Remove( counter );
+					onRemoved( counter.Item2 );
 				}
 				var tempArray = temp.ToArray();
 				this._counters = tempArray;

@@ -20,16 +20,13 @@ namespace Palantiri.Console
 			{
 				cmd = System.Console.ReadLine();
 
-				if (cmd.Equals("Exit", StringComparison.InvariantCultureIgnoreCase))
+				if( cmd.Equals( "Exit", StringComparison.InvariantCultureIgnoreCase ) )
 					return;
 
-				var convert = Args.Convert(cmd);
-				Args.InvokeAction<ConsoleCommands>(convert);
-				
-
+				var convert = Args.Convert( cmd );
+				Args.InvokeAction< ConsoleCommands >( convert );
 			}
 		}
-
 
 		public static void AddSensorTasks( params Sensor[] s )
 		{

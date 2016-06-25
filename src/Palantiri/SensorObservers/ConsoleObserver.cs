@@ -33,7 +33,7 @@ namespace Palantiri.SensorObservers
 							PerformanceCounterHelper.WriteLineCounter( res );
 						}
 					}
-					Task.Delay(this._period).Wait(this.ct);
+					Task.Delay( this._period ).Wait( this.ct );
 				}
 			}
 				);
