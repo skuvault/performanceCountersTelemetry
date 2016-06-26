@@ -7,6 +7,6 @@ namespace Palantiri.Sensors
 	{
 		void AddObservers( params ISensorObserver[] observers );
 		void RemoveObserver( ISensorObserver o );
-		void NotifyObservers( ConcurrentDictionary< string, CounterValue > counters );
+		void NotifyObservers( ConcurrentDictionary< CounterAlias, CounterValue > counters );
 	}
 }

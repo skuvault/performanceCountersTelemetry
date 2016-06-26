@@ -77,16 +77,16 @@ namespace Palantiri
 			return counter;
 		}
 
-		public static void WriteLineCounterToConsole( this IDictionary< string, CounterValue > counters )
+		public static void WriteLineCounterToConsole( this IDictionary< CounterAlias, CounterValue > counters )
 		{
 			WriteLineCounter( counters, Console.WriteLine );
 		}
 
-		public static void WriteLineCounter( this IDictionary< string, CounterValue > counters, Action< string > writer )
+		public static void WriteLineCounter( this IDictionary< CounterAlias, CounterValue > counters, Action< string > writer )
 		{
 			foreach( var c in counters )
 			{
-				writer( string.Format( "[{0}]\t[{1}]\t{2}", c.Value._dateTime, c.Key, c.Value._value ) );
+				writer(string.Format("[{0}]\t[{1}]\t{2}", c.Value.DateTime.ToString("yyyy.MM.dd HH:mm:ss.fff"), c.Key.Alias, c.Value.Value));
 			}
 		}
 	}

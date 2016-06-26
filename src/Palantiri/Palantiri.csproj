@@ -47,6 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CounterAlias.cs" />
+    <Compile Include="CounterValue.cs" />
     <Compile Include="PerformanceCounterHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -59,8 +61,6 @@
     <Compile Include="SensorObservers\ConsoleObserver.cs" />
     <Compile Include="SensorObservers\ISensorObserver.cs" />
     <Compile Include="SensorObservers\TelegrafObserver.cs" />
-    <Compile Include="Sensors\CounterAlias.cs" />
-    <Compile Include="Sensors\CounterValue.cs" />
     <Compile Include="Sensors\ISensorObservable.cs" />
     <Compile Include="Sensors\Sensor.cs" />
   </ItemGroup>
