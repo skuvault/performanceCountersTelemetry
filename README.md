@@ -4,25 +4,25 @@ A C# client to performance counters.
 
 ##Usage
 
-#Start
+##Start
 App should be started with parameters to catch system counters. Multiple instances cab be started in one machine. Each instance scans specified counters and sends them to specified destinations. 
 
 Arguments example:
 
 ``` 
-Start -cs "Ram CLR .NET;iisexpress;% Time in GC; iis-ram|Processor information;_Total;% Processor usage" -ds "Console|Telegraf"
+Start -cs "-c \"CLR .NET Ram\" -i \"iisexpress\" -n \"% Time in GC\" -a \"iis-ram\"; -c \"Processor Information\" -i \"_Total\" -a \"cpu\" -n \"% Processor usage\"" -ds "File;Telegraf" -gs ;
 ```
 
 After start app receives all the specified counters and send them to destinations.
 
-#Add Counters
+##Add Counters
 
 Counters can be added on the fly. Example:
 ```
 AddCounter -c "Processor information" -i "% Processor usage" -n "_Total" -a "cpu"
 ```
 
-#Help 
+##Help 
 ``` 
 -?
 ```
