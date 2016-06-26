@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using Palantiri.SensorObservers;
 
@@ -8,6 +7,6 @@ namespace Palantiri.Sensors
 	{
 		void AddObservers( params ISensorObserver[] observers );
 		void RemoveObserver( ISensorObserver o );
-		void NotifyObservers( ConcurrentDictionary< string, Tuple< DateTime, float > > counters );
+		void NotifyObservers( ConcurrentDictionary< string, CounterValue > counters );
 	}
 }

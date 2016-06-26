@@ -59,6 +59,7 @@
     <Compile Include="SensorObservers\ConsoleObserver.cs" />
     <Compile Include="SensorObservers\ISensorObserver.cs" />
     <Compile Include="SensorObservers\TelegrafObserver.cs" />
+    <Compile Include="Sensors\CounterValue.cs" />
     <Compile Include="Sensors\ISensorObservable.cs" />
     <Compile Include="Sensors\Sensor.cs" />
   </ItemGroup>

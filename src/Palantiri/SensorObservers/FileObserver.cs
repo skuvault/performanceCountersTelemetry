@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Palantiri.Properties;
+using Palantiri.Sensors;
 
 namespace Palantiri.SensorObservers
 {
@@ -14,13 +14,13 @@ namespace Palantiri.SensorObservers
 		protected readonly int _maxInstancesToProcess;
 		protected readonly CancellationTokenSource cts;
 		protected readonly CancellationToken ct;
-		protected ConcurrentQueue<ConcurrentDictionary<string, Tuple<DateTime, float>>> _buffer;
+		protected ConcurrentQueue< ConcurrentDictionary< string, CounterValue > > _buffer;
 		protected int _bufferDrainLimit = 100;
 		private StreamWriter _file;
 
 		public FileObserver()
 		{
-			this._buffer = new ConcurrentQueue<ConcurrentDictionary<string, Tuple<DateTime, float>>>();
+			this._buffer = new ConcurrentQueue< ConcurrentDictionary< string, CounterValue > >();
 			this._period = 500;
 			this.cts = new CancellationTokenSource();
 			this.ct = this.cts.Token;
@@ -33,7 +33,7 @@ namespace Palantiri.SensorObservers
 				{
 					if( this._buffer != null )
 					{
-						ConcurrentDictionary<string, Tuple<DateTime, float>> res;
+						ConcurrentDictionary< string, CounterValue > res;
 
 						var overflow = this._buffer.Count - this._bufferDrainLimit;
 						if( overflow > 0 )
@@ -63,7 +63,7 @@ namespace Palantiri.SensorObservers
 			this._file.Close();
 		}
 
-		public void SendCounters( ConcurrentDictionary< string, Tuple< DateTime, float > > counters )
+		public void SendCounters( ConcurrentDictionary< string, CounterValue > counters )
 		{
 			this._buffer.Enqueue( counters );
 		}

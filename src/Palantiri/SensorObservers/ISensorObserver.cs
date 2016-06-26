@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using Palantiri.Sensors;
 
 namespace Palantiri.SensorObservers
 {
 	public interface ISensorObserver
 	{
-		void SendCounters( ConcurrentDictionary< string, Tuple< DateTime, float > > counters );
+		void SendCounters( ConcurrentDictionary< string, CounterValue > counters );
 	}
 
 	public static class ObserverFactory
