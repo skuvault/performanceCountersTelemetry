@@ -12,8 +12,5 @@ namespace Palantiri.Console.Arguments.Parameters
 
 		[ ArgRequired, ArgDescription( "Counters/Destination Separator" ), ArgShortcut( "gs" ), ArgExample( ";", "Counters/Destination Separator" ), ArgPosition( 3 ) ]
 		public string GlobalSeparator{ get; set; }
-
-		//[ ArgRequired, ArgDescription( "Counters/Destination parameters Separator" ), ArgShortcut( "ps" ), ArgExample( ",", "Counters parameters separator" ), ArgPosition( 4 ) ]
-		//public string ParametersSeparator{ get; set; }
 	}
 }

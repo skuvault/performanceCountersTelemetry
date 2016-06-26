@@ -10,7 +10,7 @@ using PowerArgs;
 namespace Palantiri.Console.Arguments
 {
 	[ ArgExceptionBehavior( ArgExceptionPolicy.StandardExceptionHandling ) ]
-	public class ConsoleCommands
+	public class Commands
 	{
 		private static readonly Action< string, string, string > _notifyNotFound = ( x, y, z ) =>
 		{
@@ -46,11 +46,11 @@ namespace Palantiri.Console.Arguments
 			SensorManager.GetSingleton().AddSensors( new[] { sensor } );
 		}
 
-		private static Tuple< PerformanceCounter, string >[] GetCountersFromString( string countersList, string globalSeparator )
+		private static Tuple< PerformanceCounter, string >[] GetCountersFromString( string countersString, string globalSeparator )
 		{
-			var countersSerialized = countersList.Split( new string[] { globalSeparator }, StringSplitOptions.None ).ToList();
+			var countersStrings = countersString.Split( new[] { globalSeparator }, StringSplitOptions.None ).ToList();
 
-			var countersDeserialized = countersSerialized.Select( x => Args.Parse< Counter >( Args.Convert( x ) ) );
+			var countersDeserialized = countersStrings.Select( x => Args.Parse< Counter >( Args.Convert( x ) ) );
 
 			return countersDeserialized.SelectMany( x => GetCounterAndAlias( x, _notifyNotFound ) ).ToArray();
 		}
@@ -64,7 +64,7 @@ namespace Palantiri.Console.Arguments
 
 		private static IEnumerable< ISensorObserver > GetDestinationsFromString( string destinationsList, string globalSeparator )
 		{
-			var observersParsed = destinationsList.Split( new string[] { globalSeparator }, StringSplitOptions.None );
+			var observersParsed = destinationsList.Split( new[] { globalSeparator }, StringSplitOptions.None );
 			var sensorObservers = observersParsed.Select( x => x.CreateObserver() ).Where( y => y != null );
 			return sensorObservers;
 		}
