@@ -20,7 +20,7 @@ namespace Palantiri.Console.Arguments
 		[ HelpHook, ArgShortcut( "-?" ), ArgDescription( "Shows this help" ) ]
 		public bool Help{ get; set; }
 
-		[ ArgActionMethod, ArgDescription( "Adds counter" ) ]
+		[ ArgActionMethod, ArgDescription( "Add counter" ) ]
 		public void AddCounter( Counter args )
 		{
 			var counters = GetCounterAndAlias( args, _notifyNotFound );
