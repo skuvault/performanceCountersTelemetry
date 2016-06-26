@@ -45,6 +45,9 @@ namespace Palantiri.Console.Arguments
 		[ ArgActionMethod, ArgDescription( "Start Sensor" ) ]
 		public void Start( Counters args )
 		{
+			if( Program.GetSensorsCount() > 1 )
+				throw new Exception( "You can't add more then 1 sensor" );
+
 			var counters = GetCountersFromString( args.CountersList, args.GlobalSeparator );
 			var sensorObservers = GetDestinationsFromString( args.DestinationsList, args.GlobalSeparator );
 

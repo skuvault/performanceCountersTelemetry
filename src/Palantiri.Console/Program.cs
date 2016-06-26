@@ -40,6 +40,11 @@ namespace Palantiri.Console
 			_sensors.AddRange( s );
 		}
 
+		public static int GetSensorsCount()
+		{
+			return _sensors.Count;
+		}
+
 		public static Sensor GetSensorTask()
 		{
 			return _sensors.FirstOrDefault();
