@@ -78,7 +78,7 @@ namespace Palantiri.Console.Arguments
 			{
 				System.Console.WriteLine( "Not found: {0},{1},{2}", x, y, z );
 			};
-			var counters = PerformanceCounterHelper.GetCounters( countersDeserialized.Select( x => ( new[] { x.Category, x.Name, x.Instance, x.Alias } ).ToList().Where( y => y != null ).ToArray() ), notifyNotFound ).ToArray();
+			var counters = PerformanceCounterHelper.GetCounters( countersDeserialized.Select( x => new[] { x.Category, x.Name, x.Instance, x.Alias }.ToList().Where( y => y != null ).ToArray() ), notifyNotFound ).ToArray();
 			return counters;
 		}
 	}

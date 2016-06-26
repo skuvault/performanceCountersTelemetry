@@ -54,6 +54,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="SensorManager.cs" />
     <Compile Include="SensorObservers\FileObserver.cs" />
     <Compile Include="SensorObservers\ConsoleObserver.cs" />
     <Compile Include="SensorObservers\ISensorObserver.cs" />
