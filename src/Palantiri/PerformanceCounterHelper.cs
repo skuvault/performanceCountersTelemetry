@@ -72,8 +72,8 @@ namespace Palantiri
 
 		public static PerformanceCounter GetCounter2( string category = ".NET CLR Memory", string instance = "_Global_", string counterName = "% Time in GC" )
 		{
-			var counterCategory = Enumerable.First( Enumerable.Where( PerformanceCounterCategory.GetCategories(), x => x.CategoryName.Contains( category ) ) );
-			var counter = Enumerable.First( Enumerable.Where( counterCategory.GetCounters( instance ), x => x.CounterName.Contains( counterName ) ) );
+			var counterCategory = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName.Contains( category ) ).First();
+			var counter = counterCategory.GetCounters( instance ).Where( x => x.CounterName.Contains( counterName ) ).First();
 			return counter;
 		}
 

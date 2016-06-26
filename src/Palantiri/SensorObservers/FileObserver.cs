@@ -14,6 +14,7 @@ namespace Palantiri.SensorObservers
 		protected readonly CancellationTokenSource cts;
 		protected readonly CancellationToken ct;
 		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _buffer;
+		protected int _bufferDrainLimit = 100;
 		private StreamWriter _file;
 
 		public FileObserver()
@@ -32,9 +33,19 @@ namespace Palantiri.SensorObservers
 					if( this._buffer != null )
 					{
 						ConcurrentDictionary< string, float > res;
+
+						var overflow = this._buffer.Count - this._bufferDrainLimit;
+						if( overflow > 0 )
+						{
+							for( var j = 0; j < overflow; j++ )
+							{
+								this._buffer.TryDequeue( out res );
+							}
+						}
+
 						for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 						{
-							PerformanceCounterHelper.WriteLineCounter( res, x => this._file.WriteLine( x ) );
+							res.WriteLineCounter( x => this._file.WriteLine( x ) );
 							this._file.Flush();
 						}
 					}

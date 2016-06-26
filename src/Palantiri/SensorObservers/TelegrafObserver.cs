@@ -16,6 +16,7 @@ namespace Palantiri.SensorObservers
 		protected readonly CancellationTokenSource cts;
 		protected readonly CancellationToken ct;
 		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _buffer;
+		protected readonly int _bufferDrainLimit = 1000;
 
 		public TelegrafObserver()
 		{
@@ -35,17 +36,26 @@ namespace Palantiri.SensorObservers
 				while( !this.ct.IsCancellationRequested )
 				{
 					this.Listen();
-					Task.Delay( this._period ).Wait( this.ct );
+					Task.Delay( this._period, this.ct ).Wait( this.ct );
 				}
-			}
-				);
+			}, this.ct );
 		}
 
 		protected void Listen()
 		{
 			if( this._buffer != null )
 			{
-				ConcurrentDictionary< string, float > res;
+				ConcurrentDictionary<string, float> res;
+
+				var overflow = this._buffer.Count - this._bufferDrainLimit;
+				if (overflow > 0)
+				{
+					for (var j = 0; j < overflow; j++)
+					{
+						this._buffer.TryDequeue(out res);
+					}
+				}
+
 				for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 				{
 					var values = res.ToDictionary( x => x.Key, y => ( object )y.Value );

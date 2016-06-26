@@ -30,7 +30,7 @@ namespace Palantiri.SensorObservers
 						ConcurrentDictionary< string, float > res;
 						for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 						{
-							PerformanceCounterHelper.WriteLineCounterToConsole( res );
+							res.WriteLineCounterToConsole();
 						}
 					}
 					Task.Delay( this._period ).Wait( this.ct );
