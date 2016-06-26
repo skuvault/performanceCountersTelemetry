@@ -9,8 +9,6 @@ namespace Palantiri.Console
 {
 	class Program
 	{
-		private static readonly List< Sensor > _sensors = new List< Sensor >();
-
 		static void Main( string[] args )
 		{
 			Args.InvokeAction< ConsoleCommands >( args );
@@ -33,21 +31,6 @@ namespace Palantiri.Console
 			System.Console.Write( ">" );
 			var cmd = System.Console.ReadLine();
 			return cmd;
-		}
-
-		public static void AddSensorTasks( params Sensor[] s )
-		{
-			_sensors.AddRange( s );
-		}
-
-		public static int GetSensorsCount()
-		{
-			return _sensors.Count;
-		}
-
-		public static Sensor GetSensorTask()
-		{
-			return _sensors.FirstOrDefault();
 		}
 	}
 }

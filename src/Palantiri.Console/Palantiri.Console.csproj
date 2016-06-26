@@ -47,7 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Arguments\Command.cs" />
+    <Compile Include="Arguments\ConsoleCommands.cs" />
+    <Compile Include="Arguments\Parameters\Counter.cs" />
+    <Compile Include="Arguments\Parameters\Counters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
