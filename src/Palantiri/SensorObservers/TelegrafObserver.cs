@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,13 +16,13 @@ namespace Palantiri.SensorObservers
 		protected readonly int _maxInstancesToProcess;
 		protected readonly CancellationTokenSource cts;
 		protected readonly CancellationToken ct;
-		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _buffer;
+		protected ConcurrentQueue<ConcurrentDictionary<string, Tuple<DateTime, float>>> _buffer;
 		protected readonly int _bufferDrainLimit = 1000;
 
 		public TelegrafObserver()
 		{
 			SetupStatistics.Init( Settings.Default.TelegrafEnv, Settings.Default.TelegrafSysName, Settings.Default.TelegrafId );
-			this._buffer = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
+			this._buffer = new ConcurrentQueue<ConcurrentDictionary<string, Tuple<DateTime, float>>>();
 			this._period = 500;
 			this.cts = new CancellationTokenSource();
 			this.ct = this.cts.Token;
@@ -45,7 +46,7 @@ namespace Palantiri.SensorObservers
 		{
 			if( this._buffer != null )
 			{
-				ConcurrentDictionary<string, float> res;
+				ConcurrentDictionary<string, Tuple<DateTime, float>> res;
 
 				var overflow = this._buffer.Count - this._bufferDrainLimit;
 				if (overflow > 0)
@@ -71,7 +72,7 @@ namespace Palantiri.SensorObservers
 				this.cts.Cancel();
 		}
 
-		public void SendCounters( ConcurrentDictionary< string, float > counters )
+		public void SendCounters( ConcurrentDictionary< string, Tuple< DateTime, float > > counters )
 		{
 			this._buffer.Enqueue( counters );
 		}

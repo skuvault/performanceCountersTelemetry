@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,11 +12,11 @@ namespace Palantiri.SensorObservers
 		protected readonly int _maxInstancesToProcess;
 		protected readonly CancellationTokenSource cts;
 		protected readonly CancellationToken ct;
-		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _buffer;
+		protected ConcurrentQueue< ConcurrentDictionary< string, Tuple<DateTime,float> > > _buffer;
 
 		public ConsoleObserver()
 		{
-			this._buffer = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
+			this._buffer = new ConcurrentQueue<ConcurrentDictionary<string, Tuple<DateTime, float>>>();
 			this._period = 500;
 			this.cts = new CancellationTokenSource();
 			this.ct = this.cts.Token;
@@ -27,7 +28,7 @@ namespace Palantiri.SensorObservers
 				{
 					if( this._buffer != null )
 					{
-						ConcurrentDictionary< string, float > res;
+						ConcurrentDictionary<string, Tuple<DateTime, float>> res;
 						for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 						{
 							res.WriteLineCounterToConsole();
@@ -45,7 +46,7 @@ namespace Palantiri.SensorObservers
 				this.cts.Cancel();
 		}
 
-		public void SendCounters( ConcurrentDictionary< string, float > counters )
+		public void SendCounters( ConcurrentDictionary< string, Tuple< DateTime, float > > counters )
 		{
 			this._buffer.Enqueue( counters );
 		}

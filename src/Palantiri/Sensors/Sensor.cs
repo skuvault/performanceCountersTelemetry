@@ -35,7 +35,7 @@ namespace Palantiri.Sensors
 			this._observers.Remove( o );
 		}
 
-		public void NotifyObservers( ConcurrentDictionary< string, float > counters )
+		public void NotifyObservers( ConcurrentDictionary< string, Tuple< DateTime, float > > counters )
 		{
 			foreach( var observer in this._observers )
 			{
@@ -64,14 +64,15 @@ namespace Palantiri.Sensors
 			return null;
 		}
 
-		public ConcurrentDictionary< string, float > GetCounterValues()
+		public ConcurrentDictionary< string, Tuple< DateTime, float > > GetCounterValues()
 		{
-			var counters = new ConcurrentDictionary< string, float >();
+			var counters = new ConcurrentDictionary< string, Tuple< DateTime, float > >();
+			var dateTime = DateTime.UtcNow;
 			Parallel.ForEach( this._counters, x =>
 			{
 				try
 				{
-					counters.AddOrUpdate( x.Item2, x.Item1.NextValue(), ( cid, y ) => x.Item1.NextValue() );
+					counters.AddOrUpdate( x.Item2, Tuple.Create( dateTime, x.Item1.NextValue() ), ( cid, y ) => Tuple.Create( dateTime, x.Item1.NextValue() ) );
 				}
 				catch( Exception )
 				{

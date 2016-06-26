@@ -5,7 +5,7 @@ namespace Palantiri.SensorObservers
 {
 	public interface ISensorObserver
 	{
-		void SendCounters( ConcurrentDictionary< string, float > counters );
+		void SendCounters( ConcurrentDictionary< string, Tuple< DateTime, float > > counters );
 	}
 
 	public static class ObserverFactory
