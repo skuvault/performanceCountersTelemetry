@@ -18,7 +18,7 @@ namespace Palantiri.Console
 			string cmd = null;
 			while( cmd == null || !cmd.Equals( "Exit", StringComparison.InvariantCultureIgnoreCase ) )
 			{
-				cmd = System.Console.ReadLine();
+				cmd = ReadUserCommand( );
 
 				if( cmd.Equals( "Exit", StringComparison.InvariantCultureIgnoreCase ) )
 					return;
@@ -28,6 +28,13 @@ namespace Palantiri.Console
 			}
 		}
 
+		private static string ReadUserCommand( )
+		{
+			System.Console.Write( ">" );
+			var cmd = System.Console.ReadLine();
+			return cmd;
+		}
+
 		public static void AddSensorTasks( params Sensor[] s )
 		{
 			_sensors.AddRange( s );
@@ -35,7 +42,7 @@ namespace Palantiri.Console
 
 		public static Sensor GetSensorTask()
 		{
-			return _sensors.First();
+			return _sensors.FirstOrDefault();
 		}
 	}
 }

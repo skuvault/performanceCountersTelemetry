@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Palantiri.SensorObservers;
 using Palantiri.Sensors;
@@ -20,6 +21,8 @@ namespace Palantiri.Console.Arguments
 			var counters = PerformanceCounterHelper.GetCounters( counter, null ).ToArray();
 
 			var task = Program.GetSensorTask();
+			if( task == null )
+				throw new Exception( "Sensor was not started" );
 			task.AddCounters( counters );
 		}
 
@@ -42,8 +45,25 @@ namespace Palantiri.Console.Arguments
 		[ ArgActionMethod, ArgDescription( "Start Sensor" ) ]
 		public void Start( Counters args )
 		{
-			string[] globalSeparator = { args.GlobalSeparator };
-			var countersSerialized = args.CountersList.Split( globalSeparator, StringSplitOptions.None ).ToList();
+			var counters = GetCountersFromString( args.CountersList, args.GlobalSeparator );
+			var sensorObservers = GetDestinationsFromString( args.DestinationsList, args.GlobalSeparator );
+
+			var sensor = new Sensor( 1000, counters );
+			sensor.AddObservers( sensorObservers.ToArray() );
+			sensor.Start();
+			Program.AddSensorTasks( sensor );
+		}
+
+		private static IEnumerable< ISensorObserver > GetDestinationsFromString( string destinationsList, string globalSeparator )
+		{
+			var observersParsed = destinationsList.Split( new string[] { globalSeparator }, StringSplitOptions.None );
+			var sensorObservers = observersParsed.Select( x => x.CreateObserver() ).Where( y => y != null );
+			return sensorObservers;
+		}
+
+		private static Tuple< PerformanceCounter, string >[] GetCountersFromString( string countersList, string globalSeparator )
+		{
+			var countersSerialized = countersList.Split( new string[] { globalSeparator }, StringSplitOptions.None ).ToList();
 
 			var countersDeserialized = countersSerialized.Select( x =>
 			{
@@ -51,17 +71,12 @@ namespace Palantiri.Console.Arguments
 				return Args.Parse< Counter >( convert );
 			} );
 
-			var observersParsed = args.DestinationsList.Split( globalSeparator, StringSplitOptions.None );
-
 			Action< string, string, string > notifyNotFound = ( x, y, z ) =>
 			{
 				System.Console.WriteLine( "Not found: {0},{1},{2}", x, y, z );
 			};
-
-			var sensor = new Sensor( 1000, PerformanceCounterHelper.GetCounters( countersDeserialized.Select( x => ( new[] { x.Category, x.Name, x.Instance, x.Alias } ).ToList().Where( y => y != null ).ToArray() ), notifyNotFound ).ToArray() );
-			sensor.AddObservers( observersParsed.Select( x => x.CreateObserver() ).Where( y => y != null ).ToArray() );
-			sensor.Start();
-			Program.AddSensorTasks( sensor );
+			var counters = PerformanceCounterHelper.GetCounters( countersDeserialized.Select( x => ( new[] { x.Category, x.Name, x.Instance, x.Alias } ).ToList().Where( y => y != null ).ToArray() ), notifyNotFound ).ToArray();
+			return counters;
 		}
 	}
 
