@@ -36,7 +36,7 @@ namespace Palantiri
 			}
 		}
 
-		public static PerformanceCounter GetCounter( string category = "Память CLR .NET", string counterName = "% времени в GC", string instance = "iisexpress" )
+		public static PerformanceCounter GetCounter( string category, string counterName , string instance )
 		{
 			PerformanceCounter res = null;
 			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName == category ).ToList();
