@@ -109,13 +109,6 @@ namespace Palantiri
 			return res;
 		}
 
-		public static PerformanceCounter GetCounter2( string category , string instance , string counterName )
-		{
-			var counterCategory = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName.Contains( category ) ).First();
-			var counter = counterCategory.GetCounters( instance ).Where( x => x.CounterName.Contains( counterName ) ).First();
-			return counter;
-		}
-
 		public static void WriteLineCounterToConsole( this IDictionary< CounterAlias, CounterValue > counters )
 		{
 			WriteLineCounter( counters, Console.WriteLine );
