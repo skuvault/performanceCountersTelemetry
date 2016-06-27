@@ -10,7 +10,7 @@ App should be started with parameters to catch system counters. Multiple instanc
 Arguments example:
 
 ``` 
-Start -cs "-c \"CLR .NET Ram\" -i \"iisexpress\" -n \"% Time in GC\" -a \"iis-ram\"; -c \"Processor Information\" -i \"_Total\" -a \"cpu\" -n \"% Processor usage\"" -ds "File;Telegraf" -gs ;
+Start -cs "-c \".NET CLR Memory\" -i \"w3wp\" -n \"%% Time in GC\" -a \"w3wp-in-gc\"; -c \".NET CLR Memory\" -i \"_Global_\" -n \"%% Time in GC\" -a \"global-in-gc\"; -c \"Processor Information\" -n \"_Total\" -i \"%% Processor Time\" -a \"total-cpu-time\"" -ds "File" -ll "Debug" -ld "ColoredConsole"
 ```
 
 After start app receives all the specified counters and send them to destinations.
@@ -19,7 +19,7 @@ After start app receives all the specified counters and send them to destination
 
 Counters can be added on the fly. Example:
 ```
-AddCounter -c "Processor information" -i "% Processor usage" -n "_Total" -a "cpu"
+AddCounter -c "Processor information" -i "%% Processor usage" -n "_Total" -a "cpu"
 ```
 
 ##Help 
