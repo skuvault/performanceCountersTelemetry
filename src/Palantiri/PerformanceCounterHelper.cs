@@ -111,7 +111,10 @@ namespace Palantiri
 				}
 			}
 
-			Log.Information( res == null ? "Counter not found: {category}\\{name}\\{instance}" : "Counter found: {category}\\{name}\\{instance}", category, counterName, instance );
+			if( res == null )
+				Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance );
+			else
+				Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance );
 			return res;
 		}
 

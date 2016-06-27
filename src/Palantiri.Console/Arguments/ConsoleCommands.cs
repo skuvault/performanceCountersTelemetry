@@ -12,25 +12,20 @@ namespace Palantiri.Console.Arguments
 	[ ArgExceptionBehavior( ArgExceptionPolicy.StandardExceptionHandling ) ]
 	public class Commands
 	{
-		private static readonly Action< string, string, string > _notifyNotFound = ( x, y, z ) =>
-		{
-			System.Console.WriteLine( "Not found: {0},{1},{2}", x, y, z );
-		};
-
 		[ HelpHook, ArgShortcut( "-?" ), ArgDescription( "Shows this help" ) ]
 		public bool Help{ get; set; }
 
 		[ ArgActionMethod, ArgDescription( "Add counter" ) ]
 		public void AddCounter( Counter args )
 		{
-			var counters = GetCounterAndAlias( args, _notifyNotFound );
+			var counters = GetCounterAndAlias( args, null );
 			SensorManager.GetSingleton().GetSensorTask().AddCounters( counters );
 		}
 
 		[ ArgActionMethod, ArgDescription( "Remove counter" ) ]
 		public void RemoveCounter( Counter args )
 		{
-			var counters = GetCounterAndAlias( args, _notifyNotFound );
+			var counters = GetCounterAndAlias( args, null );
 			SensorManager.GetSingleton().GetSensorTask().RemoveCounters( counters, alias => System.Console.WriteLine( "Removed: {0}", alias ) );
 		}
 
@@ -53,7 +48,7 @@ namespace Palantiri.Console.Arguments
 
 			var countersDeserialized = countersStrings.Select( x => Args.Parse< Counter >( Args.Convert( x ) ) );
 
-			return countersDeserialized.SelectMany( x => GetCounterAndAlias( x, _notifyNotFound ) ).ToArray();
+			return countersDeserialized.SelectMany( x => GetCounterAndAlias( x, null ) ).ToArray();
 		}
 
 		private static Tuple< PerformanceCounter, string >[] GetCounterAndAlias( Counter args, Action< string, string, string > onNotFound )
