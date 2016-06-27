@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Palantiri.SensorObservers;
+using Serilog;
 
 namespace Palantiri.Sensors
 {
@@ -66,33 +67,41 @@ namespace Palantiri.Sensors
 
 		public ConcurrentDictionary< CounterAlias, CounterValue > GetCounterValues()
 		{
+			Log.Information( "Getting counters values..." );
 			var counters = new ConcurrentDictionary< CounterAlias, CounterValue >();
 			var dateTime = DateTime.UtcNow;
 			Parallel.ForEach( this._counters, x =>
 			{
 				try
 				{
-					counters.AddOrUpdate( new CounterAlias( x.Item2 ), new CounterValue( dateTime, x.Item1.NextValue() ), ( cid, y ) => new CounterValue( dateTime, x.Item1.NextValue() ) );
+					var nextValue = x.Item1.NextValue();
+					counters.AddOrUpdate( new CounterAlias( x.Item2 ), new CounterValue( dateTime, nextValue ), ( cid, y ) => new CounterValue( dateTime, nextValue ) );
+					Log.Information( "Counter value received: [{alias}][{timepoint}][{value}].", x.Item2, dateTime, nextValue );
 				}
 				catch( Exception )
 				{
 					throw; //todo notify
 				}
 			} );
+
+			Log.Information( "Counters values received." );
 			return counters;
 		}
 
 		public void Stop()
 		{
+			Log.Information( "Stopping sensor..." );
 			lock( this._startLock )
 			{
 				this._sensorCts.Cancel();
 				this._started = false;
 			}
+			Log.Information( "Sensor stopped." );
 		}
 
 		public void Start()
 		{
+			Log.Information( "Starting sensor..." );
 			lock( this._startLock )
 			{
 				if( this._started )
@@ -110,11 +119,14 @@ namespace Palantiri.Sensors
 						Task.Delay( this._periodMs ).Wait( this._sensorCt );
 					}
 				} );
+
+				Log.Information( "Sensor started." );
 			}
 		}
 
 		public void RemoveCounters( Tuple< PerformanceCounter, string >[] counters, Action< string > onRemoved )
 		{
+			Log.Information( "Removing counters..." );
 			lock( this._startLock )
 			{
 				var temp = this._counters.ToList();
@@ -122,20 +134,24 @@ namespace Palantiri.Sensors
 				{
 					temp.Remove( counter );
 					onRemoved( counter.Item2 );
+					Log.Information( "Counter marked for remove: {@counter}.", counter );
 				}
 				var tempArray = temp.ToArray();
 				this._counters = tempArray;
+				Log.Information( "Counters removed {@counters}.", counters );
 			}
 		}
 
 		public void AddCounters( Tuple< PerformanceCounter, string >[] counters )
 		{
+			Log.Information( "Adding counters..." );
 			lock( this._startLock )
 			{
 				var temp = this._counters.ToList();
 				temp.AddRange( counters );
 				var tempArray = temp.ToArray();
 				this._counters = tempArray;
+				Log.Information( "Counters added: {@counters}.", counters );
 			}
 		}
 	}

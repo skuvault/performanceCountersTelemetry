@@ -35,8 +35,9 @@ namespace Palantiri.Console.Arguments
 		}
 
 		[ ArgActionMethod, ArgDescription( "Start Sensor" ) ]
-		public void Start( Counters args )
+		public void Start( StartParameters args )
 		{
+			PerformanceCounterHelper.CreateLoggerFromConfig( args.LogLevel, args.LogDestination );
 			var counters = GetCountersFromString( args.CountersList, args.GlobalSeparator );
 			var sensorObservers = GetDestinationsFromString( args.DestinationsList, args.GlobalSeparator );
 

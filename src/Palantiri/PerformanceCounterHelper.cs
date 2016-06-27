@@ -3,11 +3,53 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Palantiri.Sensors;
+using Serilog;
 
 namespace Palantiri
 {
 	public static class PerformanceCounterHelper
 	{
+		static PerformanceCounterHelper()
+		{
+			CreateLoggerFromConfig( null, null );
+		}
+
+		public static void CreateLoggerFromConfig( string logLevel, string destination )
+		{
+			Log.Logger = new LoggerConfiguration()
+				.SetLogConfig( logLevel, destination )
+				.CreateLogger();
+		}
+
+		public static LoggerConfiguration SetLogConfig( this LoggerConfiguration lc, string logLevel, string destination )
+		{
+			lc.SetLogLevel( logLevel );
+			lc.SetLogDestination( destination );
+			return lc;
+		}
+
+		public static LoggerConfiguration SetLogLevel( this LoggerConfiguration lc, string logLevel )
+		{
+			if( string.Equals( logLevel, "Information", StringComparison.InvariantCultureIgnoreCase ) )
+				lc.MinimumLevel.Information();
+			else if( string.Equals( logLevel, "Warning", StringComparison.InvariantCultureIgnoreCase ) )
+				lc.MinimumLevel.Warning();
+			else if( string.Equals( logLevel, "Error", StringComparison.InvariantCultureIgnoreCase ) )
+				lc.MinimumLevel.Error();
+			else if( string.Equals( logLevel, "Debug", StringComparison.InvariantCultureIgnoreCase ) )
+				lc.MinimumLevel.Debug();
+			else
+				lc.MinimumLevel.Warning();
+			return lc;
+		}
+
+		public static LoggerConfiguration SetLogDestination( this LoggerConfiguration lc, string destination )
+		{
+			if( string.Equals( destination, "ColoredConsole", StringComparison.InvariantCultureIgnoreCase ) )
+				lc.WriteTo.ColoredConsole();
+			return lc;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -16,28 +58,32 @@ namespace Palantiri
 		/// <returns></returns>
 		public static IEnumerable< Tuple< PerformanceCounter, string > > GetCounters( IEnumerable< string[] > counters, Action< string, string, string > onNotFound )
 		{
+			Log.Information( "Start getting counters..." );
+
 			foreach( var counterNameAndAlias in counters )
 			{
 				var performanceCounter = GetCounter( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
 
-				if( performanceCounter == null && onNotFound != null )
-					onNotFound( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
-
-				string alias = null;
-				if( performanceCounter != null )
+				if( performanceCounter == null )
 				{
-					alias = Sensor.GetCounterId( performanceCounter );
-					if( counterNameAndAlias.Length > 3 && !string.IsNullOrWhiteSpace( counterNameAndAlias[ 3 ] ) )
-						alias = counterNameAndAlias[ 3 ];
+					if( onNotFound != null )
+						onNotFound( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
+					continue;
 				}
 
-				if( performanceCounter != null )
-					yield return Tuple.Create( performanceCounter, alias );
+				var alias = Sensor.GetCounterId( performanceCounter );
+				if( counterNameAndAlias.Length > 3 && !string.IsNullOrWhiteSpace( counterNameAndAlias[ 3 ] ) )
+					alias = counterNameAndAlias[ 3 ];
+
+				yield return Tuple.Create( performanceCounter, alias );
 			}
+
+			Log.Information( "Counters received" );
 		}
 
-		public static PerformanceCounter GetCounter( string category, string counterName , string instance )
+		public static PerformanceCounter GetCounter( string category, string counterName, string instance )
 		{
+			Log.Information( "Getting counter: {category}\\{name}\\{instance} ", category, counterName, instance );
 			PerformanceCounter res = null;
 			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName == category ).ToList();
 			foreach( var performanceCounterCategory in performanceCounterCategories )
@@ -52,21 +98,20 @@ namespace Palantiri
 						foreach( var counter in performanceCounters )
 						{
 							if( counter.CounterName == counterName )
-							{
-								Console.WriteLine( "Found: {0},{1},{2}", category, instance, counterName );
 								res = counter;
-							}
 						}
 					}
 				}
 				else
 				{
-					foreach( var counter in performanceCounterCategory.GetCounters() )
-					{
-						Console.WriteLine( ( string )counter.CounterName );
-					}
+					//foreach( var counter in performanceCounterCategory.GetCounters() )
+					//{
+					//	Console.WriteLine( ( string )counter.CounterName );
+					//}
 				}
 			}
+
+			Log.Information( res == null ? "Counter not found: {category}\\{name}\\{instance}" : "Counter found: {category}\\{name}\\{instance}", category, counterName, instance );
 			return res;
 		}
 
@@ -86,7 +131,7 @@ namespace Palantiri
 		{
 			foreach( var c in counters )
 			{
-				writer(string.Format("[{0}]\t[{1}]\t{2}", c.Value.DateTime.ToString("yyyy.MM.dd HH:mm:ss.fff"), c.Key.Alias, c.Value.Value));
+				writer( string.Format( "[{0}]\t[{1}]\t{2}", c.Value.DateTime.ToString( "yyyy.MM.dd HH:mm:ss.fff" ), c.Key.Alias, c.Value.Value ) );
 			}
 		}
 	}
