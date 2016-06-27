@@ -83,47 +83,6 @@ namespace Palantiri
 			Log.Debug( "Counters received" );
 		}
 
-		public static PerformanceCounter GetCounterOld( string category, string counterName, string instance )
-		{
-			Log.Information( "Getting counter: {category}\\{name}\\{instance} ", category, counterName, instance );
-			PerformanceCounter res = null;
-			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => String.Equals( x.CategoryName, category, StringComparison.InvariantCultureIgnoreCase ) ).ToList();
-			Log.Debug( "Suitable categories found: {@performanceCounterCategories}", performanceCounterCategories );
-			foreach( var performanceCounterCategory in performanceCounterCategories )
-			{
-				if( performanceCounterCategory.CategoryType != PerformanceCounterCategoryType.SingleInstance )
-				{
-					var instanceNames = performanceCounterCategory.GetInstanceNames();
-					var targetInstances = instanceNames.Where( x => String.Equals( x, instance, StringComparison.InvariantCultureIgnoreCase ) ).ToList();
-					Log.Debug( "Suitable instanceNames found: {@targetInstances}", targetInstances );
-
-					foreach( var targetInstance in targetInstances )
-					{
-						var performanceCounters = performanceCounterCategory.GetCounters( targetInstance ).Where( y => String.Equals( y.CategoryName, category, StringComparison.InvariantCultureIgnoreCase ) );
-						Log.Debug( "Suitable counters found: {@performanceCounters}", performanceCounters );
-						foreach( var counter in performanceCounters )
-						{
-							if( counter.CounterName == counterName )
-								res = counter;
-						}
-					}
-				}
-				else
-				{
-					//foreach( var counter in performanceCounterCategory.GetCounters() )
-					//{
-					//	Console.WriteLine( ( string )counter.CounterName );
-					//}
-				}
-			}
-
-			if( res == null )
-				Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance );
-			else
-				Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance );
-			return res;
-		}
-
 		public static PerformanceCounter GetCounter( string category, string counterName, string instance )
 		{
 			Log.Information( "Getting counter: {category}\\{name}\\{instance} ", category, counterName, instance );
