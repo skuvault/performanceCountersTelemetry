@@ -6,6 +6,7 @@ using Palantiri.Console.Arguments.Parameters;
 using Palantiri.SensorObservers;
 using Palantiri.Sensors;
 using PowerArgs;
+using Serilog;
 
 namespace Palantiri.Console.Arguments
 {
@@ -46,7 +47,15 @@ namespace Palantiri.Console.Arguments
 		{
 			var countersStrings = countersString.Split( new[] { globalSeparator }, StringSplitOptions.None ).ToList();
 
-			var countersDeserialized = countersStrings.Select( x => Args.Parse< Counter >( Args.Convert( x ) ) );
+			var countersDeserialized = countersStrings.Select( x =>
+			{
+				Log.Debug( "Counter string found: {counterstring}", x );
+				var convert = Args.Convert( x );
+				Log.Debug( "Counter string converted: {convert}", convert );
+				var parsedCounter = Args.Parse< Counter >( convert );
+				Log.Debug( "Counter string parsed: {@counter}", parsedCounter );
+				return parsedCounter;
+			} );
 
 			return countersDeserialized.SelectMany( x => GetCounterAndAlias( x, null ) ).ToArray();
 		}

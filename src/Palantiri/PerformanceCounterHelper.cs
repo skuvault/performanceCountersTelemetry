@@ -58,7 +58,7 @@ namespace Palantiri
 		/// <returns></returns>
 		public static IEnumerable< Tuple< PerformanceCounter, string > > GetCounters( IEnumerable< string[] > counters, Action< string, string, string > onNotFound )
 		{
-			Log.Information( "Start getting counters..." );
+			Log.Debug( "Start getting counters..." );
 
 			foreach( var counterNameAndAlias in counters )
 			{
@@ -78,23 +78,27 @@ namespace Palantiri
 				yield return Tuple.Create( performanceCounter, alias );
 			}
 
-			Log.Information( "Counters received" );
+			Log.Debug( "Counters received" );
 		}
 
 		public static PerformanceCounter GetCounter( string category, string counterName, string instance )
 		{
 			Log.Information( "Getting counter: {category}\\{name}\\{instance} ", category, counterName, instance );
 			PerformanceCounter res = null;
-			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => x.CategoryName == category ).ToList();
+			var performanceCounterCategories = PerformanceCounterCategory.GetCategories().Where( x => String.Equals( x.CategoryName, category, StringComparison.InvariantCultureIgnoreCase ) ).ToList();
+			Log.Debug( "Suitable categories found: {@performanceCounterCategories}", performanceCounterCategories );
 			foreach( var performanceCounterCategory in performanceCounterCategories )
 			{
 				if( performanceCounterCategory.CategoryType != PerformanceCounterCategoryType.SingleInstance )
 				{
 					var instanceNames = performanceCounterCategory.GetInstanceNames();
-					var targetInstances = instanceNames.Where( x => x == instance ).ToList();
+					var targetInstances = instanceNames.Where( x => String.Equals( x, instance, StringComparison.InvariantCultureIgnoreCase ) ).ToList();
+					Log.Debug( "Suitable instanceNames found: {@targetInstances}", targetInstances );
+
 					foreach( var targetInstance in targetInstances )
 					{
-						var performanceCounters = performanceCounterCategory.GetCounters( targetInstance ).Where( y => y.CategoryName == category );
+						var performanceCounters = performanceCounterCategory.GetCounters( targetInstance ).Where( y => String.Equals( y.CategoryName, category, StringComparison.InvariantCultureIgnoreCase ) );
+						Log.Debug("Suitable counters found: {@performanceCounters}", performanceCounters);
 						foreach( var counter in performanceCounters )
 						{
 							if( counter.CounterName == counterName )
