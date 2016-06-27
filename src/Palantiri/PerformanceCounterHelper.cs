@@ -62,21 +62,44 @@ namespace Palantiri
 			{
 				if( counterCategory.CategoryType == PerformanceCounterCategoryType.MultiInstance )
 				{
-					var instanceCounters = counterCategory.GetCounters( instance );
-					var performanceCounters = instanceCounters.FirstOrDefault( y => string.Equals( y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase ) );
-					if( performanceCounters == null )
-						Log.Warning( "Counter {name}({instance}) not found in category {category}", counterName, instance, category );
+					var instanceCounters = GetCountersOrNull( instance, counterCategory );
+
+					if (instanceCounters != null)
+					{
+						var performanceCounters = instanceCounters.FirstOrDefault(y => string.Equals(y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase));
+						if (performanceCounters == null)
+							Log.Warning("Counter {name}({instance}) not found in category {category}", counterName, instance, category);
+						else
+							res = performanceCounters;
+					}
 					else
-						res = performanceCounters;
+					{
+						Log.Warning("Counter {name}({instance}) not found in category {category}", counterName, instance, category);
+					}
 				}
 			}
 			else
 				Log.Warning( "Category not found: {category}", category );
+
 			if( res == null )
 				Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance );
 			else
 				Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance );
 			return res;
+		}
+
+		private static PerformanceCounter[] GetCountersOrNull( string instance, PerformanceCounterCategory counterCategory )
+		{
+			PerformanceCounter[] instanceCounters;
+			try
+			{
+				instanceCounters = counterCategory.GetCounters( instance );
+			}
+			catch
+			{
+				instanceCounters = null;
+			}
+			return instanceCounters;
 		}
 
 		public static void WriteLineCounterToConsole( this IDictionary< CounterAlias, CounterValue > counters )

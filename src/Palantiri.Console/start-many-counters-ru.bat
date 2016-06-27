@@ -1,0 +1,1 @@
+bin\Debug\Palantiri.Console.exe Start -cs " -c \"Память CLR .NET\" -i \"_Global_\" -n \"%% времени в GC\" -a \"global-gc-ram\"; -c \"Сведения о процессоре\" -i \"_Total\" -n \"%% загруженности процессора\" -a "cpu"; -c \"Память CLR .NET\" -i \"iisexpress\" -n \"%% времени в GC\" -a \"iisexpress-gc-ram\" " -ds "File" 
