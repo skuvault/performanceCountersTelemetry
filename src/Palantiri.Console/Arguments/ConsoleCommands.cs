@@ -19,28 +19,52 @@ namespace Palantiri.Console.Arguments
 		[ ArgActionMethod, ArgDescription( "Add counter" ) ]
 		public void AddCounter( Counter args )
 		{
-			var counters = GetCounterAndAlias( args, null );
-			SensorManager.GetSingleton().GetSensorTask().AddCounters( counters );
+			try
+			{
+				var counters = GetCounterAndAlias( args, null );
+				SensorManager.GetSingleton().GetSensorTask().AddCounters( counters );
+			}
+			catch( Exception ex )
+			{
+				Log.Error( "Exception: {@ex}", ex );
+				throw;
+			}
 		}
 
 		[ ArgActionMethod, ArgDescription( "Remove counter" ) ]
 		public void RemoveCounter( Counter args )
 		{
-			var counters = GetCounterAndAlias( args, null );
-			SensorManager.GetSingleton().GetSensorTask().RemoveCounters( counters, alias => System.Console.WriteLine( "Removed: {0}", alias ) );
+			try
+			{
+				var counters = GetCounterAndAlias( args, null );
+				SensorManager.GetSingleton().GetSensorTask().RemoveCounters( counters, alias => System.Console.WriteLine( "Removed: {0}", alias ) );
+			}
+			catch( Exception ex )
+			{
+				Log.Error( "Exception: {@ex}", ex );
+				throw;
+			}
 		}
 
 		[ ArgActionMethod, ArgDescription( "Start Sensor" ) ]
 		public void Start( StartParameters args )
 		{
-			PerformanceCounterHelper.CreateLoggerFromConfig( args.LogLevel, args.LogDestination );
-			var counters = GetCountersFromString( args.CountersList, args.GlobalSeparator );
-			var sensorObservers = GetDestinationsFromString( args.DestinationsList, args.GlobalSeparator );
+			try
+			{
+				PerformanceCounterHelper.CreateLoggerFromConfig( args.LogLevel, args.LogDestination );
+				var counters = GetCountersFromString( args.CountersList, args.GlobalSeparator );
+				var sensorObservers = GetDestinationsFromString( args.DestinationsList, args.GlobalSeparator );
 
-			var sensor = new Sensor( 1000, counters );
-			sensor.AddObservers( sensorObservers.ToArray() );
-			sensor.Start();
-			SensorManager.GetSingleton().AddSensors( new[] { sensor } );
+				var sensor = new Sensor( 1000, counters );
+				sensor.AddObservers( sensorObservers.ToArray() );
+				sensor.Start();
+				SensorManager.GetSingleton().AddSensors( new[] { sensor } );
+			}
+			catch( Exception ex )
+			{
+				Log.Error( "Exception: {@ex}", ex );
+				throw;
+			}
 		}
 
 		private static Tuple< PerformanceCounter, string >[] GetCountersFromString( string countersString, string globalSeparator )

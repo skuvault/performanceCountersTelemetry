@@ -1,0 +1,1 @@
+bin\Debug\Palantiri.Console.exe Start -cs "-c \".NET CLR Memory\" -i \"w3wp\" -n \"%% Time in GC\" -a \"w3wp-in-gc\"; -c \".NET CLR Memory\" -i \"_Global_\" -n \"%% Time in GC\" -a \"global-in-gc\"; -c \"Processor Information\" -i \"_Total\" -n \"%% Processor Time\" -a \"total-cpu-time\" " -ds "ColoredConsole" -ll "Information" -ld "File"
