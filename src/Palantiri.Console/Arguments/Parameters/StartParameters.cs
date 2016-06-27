@@ -12,11 +12,5 @@ namespace Palantiri.Console.Arguments.Parameters
 
 		[ ArgDefaultValue( ";" ), ArgDescription( "Counters/Destination Separator" ), ArgShortcut( "gs" ), ArgExample( ";", "Counters/Destination Separator" ) ]
 		public string GlobalSeparator{ get; set; }
-
-		[ ArgDefaultValue( "Warning" ), ArgDescription( "Log Level" ), ArgShortcut( "ll" ), ArgExample( "Information", "Information" ) ]
-		public string LogLevel{ get; set; }
-
-		[ ArgDefaultValue( "ColoredConsole" ), ArgDescription( "Log destination" ), ArgShortcut( "ld" ), ArgExample( "ColoredConsole", "ColoredConsole" ) ]
-		public string LogDestination{ get; set; }
 	}
 }

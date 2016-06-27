@@ -11,45 +11,15 @@ namespace Palantiri
 	{
 		static PerformanceCounterHelper()
 		{
-			CreateLoggerFromConfig( null, null );
+			CreateLoggerFromConfig();
 		}
 
-		public static void CreateLoggerFromConfig( string logLevel, string destination )
+		public static void CreateLoggerFromConfig()
 		{
-			Log.Logger = new LoggerConfiguration()
-				.SetLogConfig( logLevel, destination )
+			var logger = new LoggerConfiguration()
+				.ReadFrom.AppSettings()
 				.CreateLogger();
-		}
-
-		public static LoggerConfiguration SetLogConfig( this LoggerConfiguration lc, string logLevel, string destination )
-		{
-			lc.SetLogLevel( logLevel );
-			lc.SetLogDestination( destination );
-			return lc;
-		}
-
-		public static LoggerConfiguration SetLogLevel( this LoggerConfiguration lc, string logLevel )
-		{
-			if( string.Equals( logLevel, "Information", StringComparison.InvariantCultureIgnoreCase ) )
-				lc.MinimumLevel.Information();
-			else if( string.Equals( logLevel, "Warning", StringComparison.InvariantCultureIgnoreCase ) )
-				lc.MinimumLevel.Warning();
-			else if( string.Equals( logLevel, "Error", StringComparison.InvariantCultureIgnoreCase ) )
-				lc.MinimumLevel.Error();
-			else if( string.Equals( logLevel, "Debug", StringComparison.InvariantCultureIgnoreCase ) )
-				lc.MinimumLevel.Debug();
-			else
-				lc.MinimumLevel.Warning();
-			return lc;
-		}
-
-		public static LoggerConfiguration SetLogDestination( this LoggerConfiguration lc, string destination )
-		{
-			if( string.Equals( destination, "ColoredConsole", StringComparison.InvariantCultureIgnoreCase ) )
-				lc.WriteTo.ColoredConsole();
-			else if( string.Equals( destination, "File", StringComparison.InvariantCultureIgnoreCase ) )
-				lc.WriteTo.RollingFile( @"Log-{Date}.txt" );
-			return lc;
+			Log.Logger = logger;
 		}
 
 		/// <summary>

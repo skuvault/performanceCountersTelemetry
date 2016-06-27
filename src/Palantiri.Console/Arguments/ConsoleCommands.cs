@@ -51,7 +51,6 @@ namespace Palantiri.Console.Arguments
 		{
 			try
 			{
-				PerformanceCounterHelper.CreateLoggerFromConfig( args.LogLevel, args.LogDestination );
 				var counters = GetCountersFromString( args.CountersList, args.GlobalSeparator );
 				var sensorObservers = GetDestinationsFromString( args.DestinationsList, args.GlobalSeparator );
 
