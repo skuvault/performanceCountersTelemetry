@@ -117,7 +117,7 @@ namespace Palantiri.Sensors
 					{
 						var countersValues = this.GetCounterValues();
 						this.NotifyObservers( countersValues );
-						Task.Delay( this._periodMs ).Wait( this._sensorCt );
+						Task.Delay( this._periodMs ).Wait();
 					}
 				} );
 

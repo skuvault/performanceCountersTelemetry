@@ -14,6 +14,11 @@
 			"Name" : "% загруженности процессора",
 			"Instance" : "_Total",
 			"Alias" : ""
+		},{
+			"Category" : "Сведения о процессоре",
+			"Name" : "% загруженности процессора",
+			"Instance" : "_Total",
+			"Alias" : "cpu-total"
 		}
 	],
 
