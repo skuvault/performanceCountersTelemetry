@@ -10,10 +10,32 @@ App should be started with parameters to catch system counters. Multiple instanc
 Arguments example:
 
 ``` 
-Start -cs "-c \".NET CLR Memory\" -i \"w3wp\" -n \"%% Time in GC\" -a \"w3wp-in-gc\"; -c \".NET CLR Memory\" -i \"_Global_\" -n \"%% Time in GC\" -a \"global-in-gc\"; -c \"Processor Information\" -n \"_Total\" -i \"%% Processor Time\" -a \"total-cpu-time\"" -ds "File" -ll "Debug" -ld "ColoredConsole"
+Start -p param.json
 ```
 
-After start app receives all the specified counters and send them to destinations.
+Parameters example:
+``` 
+{
+	"Counters": [
+		{
+			"Category": "Processor Information",
+			"Name": "% Processor Time",
+			"Instance": "_Total",
+			"Alias": "cpu-total"
+		}
+	],
+
+	"Destinations": [
+		{
+			"Name": "Console"
+		}
+	],
+
+	"Period": 1000
+}
+```
+
+After start app receives all counters (specified in parameters) and send them to destinations (specified in parameters).
 
 ##Add Counters
 
