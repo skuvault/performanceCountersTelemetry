@@ -1,26 +1,18 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)"
-              GeneratedClassNamespace="Palantiri.Properties" GeneratedClassName="Settings">
-	<Profiles />
-	<Settings>
-		<Setting Name="TelegrafEnv" Type="System.String" Scope="User">
-			<Value Profile="(Default)">environemnt</Value>
-		</Setting>
-		<Setting Name="TelegrafSysName" Type="System.String" Scope="User">
-			<Value Profile="(Default)">sysName</Value>
-		</Setting>
-		<Setting Name="TelegrafId" Type="System.String" Scope="User">
-			<Value Profile="(Default)">id</Value>
-		</Setting>
-		<Setting Name="TalagrafStatisticsServer" Type="System.String" Scope="User">
-			<Value Profile="(Default)">127.0.0.1</Value>
-		</Setting>
-		<Setting Name="TelegrafStatisticsPort" Type="System.Int32" Scope="User">
-			<Value Profile="(Default)">8125</Value>
-		</Setting>
-		<Setting Name="FileOberverPath" Type="System.String" Scope="User">
-			<Value Profile="(Default)">output.txt</Value>
-		</Setting>
-	</Settings>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Palantiri.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TelegrafEnv" Type="System.String" Scope="User">
+      <Value Profile="(Default)">environemnt</Value>
+    </Setting>
+    <Setting Name="TelegrafSysName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">sysName</Value>
+    </Setting>
+    <Setting Name="TelegrafId" Type="System.String" Scope="User">
+      <Value Profile="(Default)">id</Value>
+    </Setting>
+    <Setting Name="FileOberverPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">output.txt</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

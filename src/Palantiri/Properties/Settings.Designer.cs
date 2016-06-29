@@ -61,30 +61,6 @@ namespace Palantiri.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
-        public string TalagrafStatisticsServer {
-            get {
-                return ((string)(this["TalagrafStatisticsServer"]));
-            }
-            set {
-                this["TalagrafStatisticsServer"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("8125")]
-        public int TelegrafStatisticsPort {
-            get {
-                return ((int)(this["TelegrafStatisticsPort"]));
-            }
-            set {
-                this["TelegrafStatisticsPort"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("output.txt")]
         public string FileOberverPath {
             get {
