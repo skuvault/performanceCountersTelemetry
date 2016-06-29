@@ -28,7 +28,7 @@ namespace Palantiri
 		/// <param name="counters">[Category,Instance,CounterName]</param>
 		/// <param name="onNotFound"></param>
 		/// <returns></returns>
-		public static IEnumerable< Tuple< PerformanceCounter, string > > GetCounters( IEnumerable< string[] > counters, Action< string, string, string > onNotFound )
+		public static IEnumerable<PerforrmanceCounterProxy> GetCounters(IEnumerable<string[]> counters, Action<string, string, string> onNotFound)
 		{
 			Log.Debug( "Start getting counters..." );
 
@@ -47,7 +47,7 @@ namespace Palantiri
 				if( counterNameAndAlias.Length > 3 && !string.IsNullOrWhiteSpace( counterNameAndAlias[ 3 ] ) )
 					alias = counterNameAndAlias[ 3 ];
 
-				yield return Tuple.Create( performanceCounter, alias );
+				yield return new PerforrmanceCounterProxy(performanceCounter, alias);
 			}
 
 			Log.Debug( "Counters received" );

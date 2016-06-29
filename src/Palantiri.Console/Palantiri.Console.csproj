@@ -36,6 +36,10 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PowerArgs, Version=2.7.1.0, Culture=neutral, PublicKeyToken=26a276264bbd55b8, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PowerArgs.2.7.1.0\lib\net45\PowerArgs.dll</HintPath>
       <Private>True</Private>
@@ -60,6 +64,8 @@
   <ItemGroup>
     <Compile Include="Arguments\ConsoleCommands.cs" />
     <Compile Include="Arguments\Parameters\Counter.cs" />
+    <Compile Include="Arguments\Parameters\JsonModels\Destination.cs" />
+    <Compile Include="Arguments\Parameters\JsonModels\JsonFile.cs" />
     <Compile Include="Arguments\Parameters\StartParameters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -67,6 +73,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="parameters.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Palantiri\Palantiri.csproj">

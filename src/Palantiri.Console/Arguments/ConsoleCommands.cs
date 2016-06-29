@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 using Palantiri.Console.Arguments.Parameters;
+using Palantiri.Console.Arguments.Parameters.JsonModels;
 using Palantiri.SensorObservers;
 using Palantiri.Sensors;
 using PowerArgs;
@@ -51,11 +54,7 @@ namespace Palantiri.Console.Arguments
 		{
 			try
 			{
-				var counters = GetCountersFromString( args.CountersList, args.GlobalSeparator );
-				var sensorObservers = GetDestinationsFromString( args.DestinationsList, args.GlobalSeparator );
-
-				var sensor = new Sensor( 1000, counters );
-				sensor.AddObservers( sensorObservers.ToArray() );
+				var sensor = CreateSensorFromJson( args );
 				sensor.Start();
 				SensorManager.GetSingleton().AddSensors( new[] { sensor } );
 			}
@@ -66,35 +65,28 @@ namespace Palantiri.Console.Arguments
 			}
 		}
 
-		private static Tuple< PerformanceCounter, string >[] GetCountersFromString( string countersString, string globalSeparator )
+		private static Sensor CreateSensorFromJson( StartParameters args )
 		{
-			var countersStrings = countersString.Split( new[] { globalSeparator }, StringSplitOptions.None ).ToList();
-
-			var countersDeserialized = countersStrings.Select( x =>
+			JsonConfig jsonConfig;
+			using( var r = new StreamReader( args.Path,Encoding.UTF8 ) )
 			{
-				Log.Debug( "Counter string found: {counterstring}", x );
-				var convert = Args.Convert( x );
-				Log.Debug( "Counter string converted: {convert}", convert );
-				var parsedCounter = Args.Parse< Counter >( convert );
-				Log.Debug( "Counter string parsed: {@counter}", parsedCounter );
-				return parsedCounter;
-			} );
+				var jsonStr = r.ReadToEnd();
+				jsonConfig = JsonConvert.DeserializeObject< JsonConfig >( jsonStr );
+			}
 
-			return countersDeserialized.SelectMany( x => GetCounterAndAlias( x, null ) ).ToArray();
+			var counters = jsonConfig.Counters.SelectMany( x => GetCounterAndAlias( x, null ) ).ToArray();
+			var destinations = jsonConfig.Destinations.Select( x => x.Name.CreateObserver() ).ToArray();
+
+			var sensor = new Sensor( 1000, counters );
+			sensor.AddObservers( destinations );
+			return sensor;
 		}
 
-		private static Tuple< PerformanceCounter, string >[] GetCounterAndAlias( Counter args, Action< string, string, string > onNotFound )
+		private static PerforrmanceCounterProxy[] GetCounterAndAlias( Counter args, Action< string, string, string > onNotFound )
 		{
 			var counter = new List< string[] >() { new[] { args.Category, args.Name, args.Instance, args.Alias } };
 			var counters = PerformanceCounterHelper.GetCounters( counter, onNotFound ).ToArray();
 			return counters;
-		}
-
-		private static IEnumerable< ISensorObserver > GetDestinationsFromString( string destinationsList, string globalSeparator )
-		{
-			var observersParsed = destinationsList.Split( new[] { globalSeparator }, StringSplitOptions.None );
-			var sensorObservers = observersParsed.Select( x => x.CreateObserver() ).Where( y => y != null );
-			return sensorObservers;
 		}
 	}
 }

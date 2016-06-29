@@ -1,0 +1,29 @@
+﻿{
+	"Counters" : [{
+			"Category" : "Category",
+			"Name" : "Name",
+			"Instance" : "Instance",
+			"Alias" : "Alias"
+		},{
+			"Category" : "Память CLR .NET",
+			"Name" : "% времени в GC",
+			"Instance" : "iisexpress",
+			"Alias" : "iis-ram"
+		},{
+			"Category" : "Сведения о процессоре",
+			"Name" : "% загруженности процессора",
+			"Instance" : "_Total",
+			"Alias" : ""
+		}
+	],
+
+	"Destinations" : [{
+			"Parameters" : "",
+			"Name" : "Telegraf"
+		},{
+			"Parameters" : "destination.txt",
+			"Name" : "File"
+		}
+	]
+
+}

@@ -12,7 +12,7 @@ namespace Palantiri.Sensors
 {
 	public class Sensor: ISensorObservable
 	{
-		protected Tuple< PerformanceCounter, string >[] _counters{ get; set; }
+		protected PerforrmanceCounterProxy[] _counters{ get; set; }
 		protected int _periodMs{ get; set; }
 		protected bool _started{ get; set; }
 		protected object _startLock = new object();
@@ -44,7 +44,7 @@ namespace Palantiri.Sensors
 			}
 		}
 
-		public Sensor( int periodMs, params Tuple< PerformanceCounter, string >[] counters )
+		public Sensor( int periodMs, params PerforrmanceCounterProxy[] counters )
 		{
 			this._counters = counters;
 			this._periodMs = periodMs;
@@ -74,9 +74,9 @@ namespace Palantiri.Sensors
 			{
 				try
 				{
-					var nextValue = x.Item1.NextValue();
-					counters.AddOrUpdate( new CounterAlias( x.Item2 ), new CounterValue( dateTime, nextValue ), ( cid, y ) => new CounterValue( dateTime, nextValue ) );
-					Log.Information( "Counter value received: [{alias}][{timepoint}][{value}].", x.Item2, dateTime, nextValue );
+					var nextValue = x.Counter.NextValue();
+					counters.AddOrUpdate( new CounterAlias( x.Alias ), new CounterValue( dateTime, nextValue ), ( cid, y ) => new CounterValue( dateTime, nextValue ) );
+					Log.Information( "Counter value received: [{alias}][{timepoint}][{value}].", x.Alias, dateTime, nextValue );
 				}
 				catch( Exception )
 				{
@@ -124,7 +124,7 @@ namespace Palantiri.Sensors
 			}
 		}
 
-		public void RemoveCounters( Tuple< PerformanceCounter, string >[] counters, Action< string > onRemoved )
+		public void RemoveCounters( PerforrmanceCounterProxy[] counters, Action< string > onRemoved )
 		{
 			Log.Information( "Removing counters..." );
 			lock( this._startLock )
@@ -133,7 +133,7 @@ namespace Palantiri.Sensors
 				foreach( var counter in counters )
 				{
 					temp.Remove( counter );
-					onRemoved( counter.Item2 );
+					onRemoved( counter.Alias );
 					Log.Information( "Counter marked for remove: {@counter}.", counter );
 				}
 				var tempArray = temp.ToArray();
@@ -142,7 +142,7 @@ namespace Palantiri.Sensors
 			}
 		}
 
-		public void AddCounters( Tuple< PerformanceCounter, string >[] counters )
+		public void AddCounters( PerforrmanceCounterProxy[] counters )
 		{
 			Log.Information( "Adding counters..." );
 			lock( this._startLock )
