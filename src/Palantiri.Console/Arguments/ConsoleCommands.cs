@@ -103,7 +103,11 @@ namespace Palantiri.Console.Arguments
 			}
 
 			var counters = jsonConfig.Counters.SelectMany( x => GetCounterAndAlias( x, null ) ).ToArray();
-			var destinations = jsonConfig.Destinations.Select( x => x.Name.CreateObserver( Args.Convert( x.Parameters ) ) ).ToArray();
+			var destinations = jsonConfig.Destinations.Select( x =>
+			{
+				var parameters = string.IsNullOrWhiteSpace( x.Parameters ) ? null : Args.Convert( x.Parameters );
+				return x.Name.CreateObserver( parameters );
+			} ).ToArray();
 
 			var sensor = new Sensor( jsonConfig.Period, counters );
 			sensor.AddObservers( destinations );

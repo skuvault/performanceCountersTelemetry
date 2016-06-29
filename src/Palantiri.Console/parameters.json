@@ -1,34 +1,37 @@
 ﻿{
-	"Counters" : [{
-			"Category" : "Category",
-			"Name" : "Name",
-			"Instance" : "Instance",
-			"Alias" : "Alias"
-		},{
-			"Category" : "Память CLR .NET",
-			"Name" : "% времени в GC",
-			"Instance" : "iisexpress",
-			"Alias" : "iis-ram"
-		},{
-			"Category" : "Сведения о процессоре",
-			"Name" : "% загруженности процессора",
-			"Instance" : "_Total",
-			"Alias" : ""
-		},{
-			"Category" : "Сведения о процессоре",
-			"Name" : "% загруженности процессора",
-			"Instance" : "_Total",
-			"Alias" : "cpu-total"
+	"Counters": [
+		{
+			"Category": ".NET CLR Memory",
+			"Name": "% Time in GC",
+			"Instance": "w3wp",
+			"Alias": "cpu-gc-w3wp"
+		},
+		{
+			"Category": ".NET CLR Memory",
+			"Name": "% Time in GC",
+			"Instance": "_Global_",
+			"Alias": "cpu-gc-global"
+		},
+		{
+			"Category": "Processor Information",
+			"Name": "% Processor Time",
+			"Instance": "_Total",
+			"Alias": "cpu-total"
 		}
 	],
 
-	"Destinations" : [{
-			"Parameters" : "",
-			"Name" : "Telegraf"
-		},{
-			"Parameters" : "destination.txt",
-			"Name" : "File"
+	"Destinations": [
+		{
+			"Parameters": "500 1000 environemnt sysName id",
+			"Name": "Telegraf"
+		},
+		{
+			"Parameters": "destination.txt",
+			"Name": "File"
 		}
-	]
+	],
+
+	"Period": 1000
+
 
 }

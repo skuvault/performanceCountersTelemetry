@@ -1,0 +1,37 @@
+﻿{
+	"Counters" : [{
+			"Category" : "Category",
+			"Name" : "Name",
+			"Instance" : "Instance",
+			"Alias" : "Alias"
+		},{
+			"Category" : "Память CLR .NET",
+			"Name" : "% времени в GC",
+			"Instance" : "iisexpress",
+			"Alias" : "iis-ram"
+		},{
+			"Category" : "Сведения о процессоре",
+			"Name" : "% загруженности процессора",
+			"Instance" : "_Total",
+			"Alias" : ""
+		},{
+			"Category" : "Сведения о процессоре",
+			"Name" : "% загруженности процессора",
+			"Instance" : "_Total",
+			"Alias" : "cpu-total"
+		}
+	],
+
+	"Destinations" : [{
+			"Parameters": "500 1000 environemnt sysName id",
+			"Name" : "Telegraf"
+		},{
+			"Parameters" : "destination.txt",
+			"Name" : "File"
+		},{
+			"Name" : "Console"
+		}
+	],
+	"Period": 1000
+
+}

@@ -75,6 +75,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="parameters-ru.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="parameters.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
