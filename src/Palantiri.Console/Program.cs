@@ -6,7 +6,7 @@ namespace Palantiri.Console
 {
 	class Program
 	{
-		static void Main( string[] args )
+		static int Main( string[] args )
 		{
 			Args.InvokeAction< Commands >( args );
 			System.Console.WriteLine( "Enter 'Exit' key to Exit" );
@@ -17,11 +17,13 @@ namespace Palantiri.Console
 				cmd = ReadUserCommand();
 
 				if( cmd.Equals( "Exit", StringComparison.InvariantCultureIgnoreCase ) )
-					return;
+					return 0;
 
 				var convert = Args.Convert( cmd );
 				Args.InvokeAction< Commands >( convert );
 			}
+
+			return 1;
 		}
 
 		private static string ReadUserCommand()
