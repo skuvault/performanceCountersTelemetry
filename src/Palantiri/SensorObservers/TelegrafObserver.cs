@@ -19,11 +19,11 @@ namespace Palantiri.SensorObservers
 		protected ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > > _buffer;
 		protected readonly int _bufferDrainLimit = 1000;
 
-		public TelegrafObserver()
+		public TelegrafObserver( params string[] args )
 		{
 			SetupStatistics.Init( Settings.Default.TelegrafEnv, Settings.Default.TelegrafSysName, Settings.Default.TelegrafId );
 			this._buffer = new ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > >();
-			this._period = 500;
+			this._period = int.Parse( args[ 0 ] );
 			this.cts = new CancellationTokenSource();
 			this.ct = this.cts.Token;
 			this._maxInstancesToProcess = 10;
@@ -37,7 +37,7 @@ namespace Palantiri.SensorObservers
 				while( !this.ct.IsCancellationRequested )
 				{
 					this.Listen();
-					Task.Delay( this._period, this.ct ).Wait( this.ct );
+					Task.Delay( this._period, this.ct ).Wait();
 				}
 			}, this.ct );
 		}
@@ -80,9 +80,6 @@ namespace Palantiri.SensorObservers
 
 	public static class SetupStatistics
 	{
-		public const string StatisticsServer = "127.0.0.1";
-		public const int StatisticsPort = 8125;
-
 		public static void Init( string environemnt, string sysName, string id )
 		{
 			ConfigureStatsD( environemnt, sysName, id );

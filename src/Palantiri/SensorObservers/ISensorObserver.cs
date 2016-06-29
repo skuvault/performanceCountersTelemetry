@@ -16,7 +16,7 @@ namespace Palantiri.SensorObservers
 			if( string.Equals( observer, "Console", StringComparison.InvariantCultureIgnoreCase ) )
 				return new ConsoleObserver();
 			else if( string.Equals( observer, "Telegraf", StringComparison.InvariantCultureIgnoreCase ) )
-				return new TelegrafObserver();
+				return new TelegrafObserver(args);
 			else if( string.Equals( observer, "File", StringComparison.InvariantCultureIgnoreCase ) )
 				return new FileObserver( args.Length > 0 ? args[ 0 ] : null );
 			return null;
