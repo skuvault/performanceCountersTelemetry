@@ -16,9 +16,11 @@ namespace Palantiri.SensorObservers
 		protected readonly CancellationToken ct;
 		protected ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > > _buffer;
 		protected int _bufferDrainLimit = 100;
-		private StreamWriter _file;
 
-		public FileObserver()
+		private StreamWriter _file;
+		private string _fileName = Settings.Default.FileOberverPath;
+
+		public FileObserver( string fileName )
 		{
 			this._buffer = new ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > >();
 			this._period = 500;
@@ -28,7 +30,10 @@ namespace Palantiri.SensorObservers
 
 			this._consoleWriter = Task.Factory.StartNew( () =>
 			{
-				this._file = new StreamWriter( Settings.Default.FileOberverPath );
+				if( !string.IsNullOrWhiteSpace( fileName ) )
+					this._fileName = fileName;
+
+				this._file = new StreamWriter( this._fileName );
 				while( !this.ct.IsCancellationRequested )
 				{
 					if( this._buffer != null )

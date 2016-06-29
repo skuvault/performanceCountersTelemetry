@@ -30,15 +30,6 @@ namespace Palantiri.Sensors
 			this._periodMs = periodMs;
 			this._countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
 			this._observers = new List< ISensorObserver >();
-			this._sensorTask = Task.Factory.StartNew( () =>
-			{
-				while( this._started && !this._sensorCt.IsCancellationRequested )
-				{
-					var countersValues = this.GetCounterValues();
-					this.NotifyObservers( countersValues );
-					Task.Delay( this._periodMs ).Wait( this._sensorCt );
-				}
-			} );
 		}
 
 		public void AddObservers( params ISensorObserver[] observers )
@@ -120,6 +111,15 @@ namespace Palantiri.Sensors
 				this._started = true;
 				this._sensorCts = new CancellationTokenSource();
 				this._sensorCt = this._sensorCts.Token;
+				this._sensorTask = Task.Factory.StartNew( () =>
+				{
+					while( this._started && !this._sensorCt.IsCancellationRequested )
+					{
+						var countersValues = this.GetCounterValues();
+						this.NotifyObservers( countersValues );
+						Task.Delay( this._periodMs ).Wait( this._sensorCt );
+					}
+				} );
 
 				Log.Information( "Sensor started." );
 			}

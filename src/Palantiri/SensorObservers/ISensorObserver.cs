@@ -11,14 +11,14 @@ namespace Palantiri.SensorObservers
 
 	public static class ObserverFactory
 	{
-		public static ISensorObserver CreateObserver( this string observer )
+		public static ISensorObserver CreateObserver( this string observer, params string[] args )
 		{
 			if( string.Equals( observer, "Console", StringComparison.InvariantCultureIgnoreCase ) )
 				return new ConsoleObserver();
 			else if( string.Equals( observer, "Telegraf", StringComparison.InvariantCultureIgnoreCase ) )
 				return new TelegrafObserver();
 			else if( string.Equals( observer, "File", StringComparison.InvariantCultureIgnoreCase ) )
-				return new FileObserver();
+				return new FileObserver( args.Length > 0 ? args[ 0 ] : null );
 			return null;
 		}
 	}
