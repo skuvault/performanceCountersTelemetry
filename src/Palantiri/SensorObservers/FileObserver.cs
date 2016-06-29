@@ -18,7 +18,7 @@ namespace Palantiri.SensorObservers
 		protected int _bufferDrainLimit = 100;
 
 		private StreamWriter _file;
-		private string _fileName = Settings.Default.FileOberverPath;
+		private string _fileName = "palantiri-output.txt";
 
 		public FileObserver( string fileName )
 		{

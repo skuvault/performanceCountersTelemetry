@@ -17,16 +17,17 @@ namespace Palantiri.SensorObservers
 		protected readonly CancellationTokenSource cts;
 		protected readonly CancellationToken ct;
 		protected ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > > _buffer;
-		protected readonly int _bufferDrainLimit = 1000;
+		protected readonly int _bufferDrainLimit;
 
 		public TelegrafObserver( params string[] args )
 		{
-			SetupStatistics.Init( Settings.Default.TelegrafEnv, Settings.Default.TelegrafSysName, Settings.Default.TelegrafId );
+			SetupStatistics.Init( args[ 2 ], args[ 3 ], args[ 4 ] );
 			this._buffer = new ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > >();
 			this._period = int.Parse( args[ 0 ] );
 			this.cts = new CancellationTokenSource();
 			this.ct = this.cts.Token;
 			this._maxInstancesToProcess = 10;
+			this._bufferDrainLimit = int.Parse( args[ 1 ] );
 			this.StartListening();
 		}
 

@@ -22,53 +22,5 @@ namespace Palantiri.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("environemnt")]
-        public string TelegrafEnv {
-            get {
-                return ((string)(this["TelegrafEnv"]));
-            }
-            set {
-                this["TelegrafEnv"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("sysName")]
-        public string TelegrafSysName {
-            get {
-                return ((string)(this["TelegrafSysName"]));
-            }
-            set {
-                this["TelegrafSysName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("id")]
-        public string TelegrafId {
-            get {
-                return ((string)(this["TelegrafId"]));
-            }
-            set {
-                this["TelegrafId"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("output.txt")]
-        public string FileOberverPath {
-            get {
-                return ((string)(this["FileOberverPath"]));
-            }
-            set {
-                this["FileOberverPath"] = value;
-            }
-        }
     }
 }
