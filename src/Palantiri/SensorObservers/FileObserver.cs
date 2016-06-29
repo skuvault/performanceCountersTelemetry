@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Palantiri.Counters;
 using Palantiri.Properties;
 
 namespace Palantiri.SensorObservers

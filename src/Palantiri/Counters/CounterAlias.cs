@@ -1,4 +1,4 @@
-﻿namespace Palantiri
+﻿namespace Palantiri.Counters
 {
 	public class CounterAlias
 	{

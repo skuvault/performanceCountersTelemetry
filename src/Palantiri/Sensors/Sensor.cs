@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Palantiri.Counters;
 using Palantiri.SensorObservers;
 using Serilog;
 
@@ -22,6 +23,23 @@ namespace Palantiri.Sensors
 		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _countersQueue;
 		protected ConcurrentDictionary< string, string > _countersAlias;
 		protected List< ISensorObserver > _observers;
+
+		public Sensor( int periodMs, params PerforrmanceCounterProxy[] counters )
+		{
+			this._counters = counters;
+			this._periodMs = periodMs;
+			this._countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
+			this._observers = new List< ISensorObserver >();
+			this._sensorTask = Task.Factory.StartNew( () =>
+			{
+				while( this._started && !this._sensorCt.IsCancellationRequested )
+				{
+					var countersValues = this.GetCounterValues();
+					this.NotifyObservers( countersValues );
+					Task.Delay( this._periodMs ).Wait( this._sensorCt );
+				}
+			} );
+		}
 
 		public void AddObservers( params ISensorObserver[] observers )
 		{
@@ -42,14 +60,6 @@ namespace Palantiri.Sensors
 			{
 				observer.SendCounters( counters );
 			}
-		}
-
-		public Sensor( int periodMs, params PerforrmanceCounterProxy[] counters )
-		{
-			this._counters = counters;
-			this._periodMs = periodMs;
-			this._countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
-			this._observers = new List< ISensorObserver >();
 		}
 
 		public static string GetCounterId( PerformanceCounter x )
@@ -110,15 +120,6 @@ namespace Palantiri.Sensors
 				this._started = true;
 				this._sensorCts = new CancellationTokenSource();
 				this._sensorCt = this._sensorCts.Token;
-				this._sensorTask = Task.Factory.StartNew( () =>
-				{
-					while( this._started && !this._sensorCt.IsCancellationRequested )
-					{
-						var counters = this.GetCounterValues();
-						this.NotifyObservers( counters );
-						Task.Delay( this._periodMs ).Wait( this._sensorCt );
-					}
-				} );
 
 				Log.Information( "Sensor started." );
 			}

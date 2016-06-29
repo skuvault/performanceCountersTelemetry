@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Palantiri.Counters;
 using Palantiri.SensorObservers;
 
 namespace Palantiri.Sensors

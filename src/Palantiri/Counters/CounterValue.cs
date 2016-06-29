@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Palantiri
+namespace Palantiri.Counters
 {
 	public class CounterValue
 	{

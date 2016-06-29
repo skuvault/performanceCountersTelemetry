@@ -77,8 +77,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CounterAlias.cs" />
-    <Compile Include="CounterValue.cs" />
+    <Compile Include="Counters\CounterAlias.cs" />
+    <Compile Include="Counters\CounterCategory.cs" />
+    <Compile Include="Counters\CounterInstance.cs" />
+    <Compile Include="Counters\CounterName.cs" />
+    <Compile Include="Counters\CounterFullName.cs" />
+    <Compile Include="Counters\CounterValue.cs" />
     <Compile Include="PerformanceCounterHelper.cs" />
     <Compile Include="PerforrmanceCounterProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

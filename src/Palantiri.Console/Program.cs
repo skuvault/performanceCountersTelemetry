@@ -10,6 +10,7 @@ namespace Palantiri.Console
 		{
 			Args.InvokeAction< Commands >( args );
 			System.Console.WriteLine( "Enter 'Exit' key to Exit" );
+
 			string cmd = null;
 			while( cmd == null || !cmd.Equals( "Exit", StringComparison.InvariantCultureIgnoreCase ) )
 			{
@@ -17,6 +18,10 @@ namespace Palantiri.Console
 
 				if( cmd.Equals( "Exit", StringComparison.InvariantCultureIgnoreCase ) )
 					return;
+				if( cmd.Equals( "Stop", StringComparison.InvariantCultureIgnoreCase ) )
+					SensorManager.GetSingleton().GetSensorTask().Stop();
+				if( cmd.Equals( "Start", StringComparison.InvariantCultureIgnoreCase ) )
+					SensorManager.GetSingleton().GetSensorTask().Start();
 
 				var convert = Args.Convert( cmd );
 				Args.InvokeAction< Commands >( convert );

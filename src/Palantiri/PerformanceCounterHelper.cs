@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Palantiri.Counters;
 using Palantiri.Sensors;
 using Serilog;
 
