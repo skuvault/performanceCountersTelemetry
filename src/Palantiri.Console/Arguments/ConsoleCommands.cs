@@ -49,7 +49,7 @@ namespace Palantiri.Console.Arguments
 			}
 		}
 
-		[ ArgActionMethod, ArgDescription( "Start Sensor" ) ]
+		[ ArgActionMethod, ArgDescription( "Create sensor and start" ) ]
 		public void CreateSensorAndStart( CreateSensorAndStartParameters args )
 		{
 			try
@@ -66,7 +66,7 @@ namespace Palantiri.Console.Arguments
 		}
 
 		[ ArgActionMethod, ArgDescription( "Stop Sensor" ) ]
-		public void Stop( CreateSensorAndStartParameters args )
+		public void Stop( StopParameters args )
 		{
 			try
 			{
@@ -79,13 +79,19 @@ namespace Palantiri.Console.Arguments
 			}
 		}
 
-		//if( cmd.Equals( "Stop", StringComparison.InvariantCultureIgnoreCase ) )
-		//{
-
-		//}
-
-		//if( cmd.Equals( "Start", StringComparison.InvariantCultureIgnoreCase ) )
-		//	SensorManager.GetSingleton().GetSensorTask().Start();
+		[ ArgActionMethod, ArgDescription( "Start Sensor" ) ]
+		public void Start( StartParameters args )
+		{
+			try
+			{
+				SensorManager.GetSingleton().GetSensorTask().Start();
+			}
+			catch( Exception ex )
+			{
+				Log.Error( "Exception: {@ex}", ex );
+				throw;
+			}
+		}
 
 		private static Sensor CreateSensorFromJson( CreateSensorAndStartParameters args )
 		{
@@ -97,7 +103,7 @@ namespace Palantiri.Console.Arguments
 			}
 
 			var counters = jsonConfig.Counters.SelectMany( x => GetCounterAndAlias( x, null ) ).ToArray();
-			var destinations = jsonConfig.Destinations.Select( x => x.Name.CreateObserver(x.Parameters) ).ToArray();
+			var destinations = jsonConfig.Destinations.Select( x => x.Name.CreateObserver( x.Parameters ) ).ToArray();
 
 			var sensor = new Sensor( 1000, counters );
 			sensor.AddObservers( destinations );
