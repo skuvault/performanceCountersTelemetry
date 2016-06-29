@@ -10,7 +10,7 @@ App should be started with parameters to catch system counters. Multiple instanc
 Arguments example:
 
 ``` 
-Start -p param.json
+CreateSensorAndStart -p param.json
 ```
 
 Parameters example:
