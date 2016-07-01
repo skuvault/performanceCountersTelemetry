@@ -116,7 +116,9 @@ namespace Palantiri.Sensors
 					while( this._started && !this._sensorCt.IsCancellationRequested )
 					{
 						var countersValues = this.GetCounterValues();
-						this.NotifyObservers( countersValues );
+
+						this.NotifyObservers(countersValues);
+						Log.Debug("Sensor observers notified");
 						Task.Delay( this._periodMs ).Wait();
 					}
 				} );

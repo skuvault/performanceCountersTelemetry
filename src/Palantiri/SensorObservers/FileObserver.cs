@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Palantiri.Counters;
-using Palantiri.Properties;
+using Serilog;
 
 namespace Palantiri.SensorObservers
 {
@@ -36,6 +36,7 @@ namespace Palantiri.SensorObservers
 				this._file = new StreamWriter( this._fileName );
 				while( !this.ct.IsCancellationRequested )
 				{
+					Log.Debug( "Start FileObserver listening..." );
 					if( this._buffer != null )
 					{
 						ConcurrentDictionary< CounterAlias, CounterValue > res;
@@ -51,10 +52,13 @@ namespace Palantiri.SensorObservers
 
 						for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
 						{
+							Log.Debug( "Start FileObserver values sending." );
 							res.WriteLineCounter( x => this._file.WriteLine( x ) );
 							this._file.Flush();
+							Log.Debug( "FileObserver values sent successfully." );
 						}
 					}
+					Log.Debug( "End FileObserver listening." );
 					Task.Delay( this._period ).Wait( this.ct );
 				}
 			}

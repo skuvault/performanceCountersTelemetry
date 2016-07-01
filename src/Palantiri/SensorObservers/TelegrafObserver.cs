@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Palantiri.Counters;
-using Palantiri.Properties;
+using Serilog;
 using Telegraf;
 
 namespace Palantiri.SensorObservers
@@ -21,6 +21,7 @@ namespace Palantiri.SensorObservers
 
 		public TelegrafObserver( params string[] args )
 		{
+			Log.Debug( "Start TelegrafObserver creation..." );
 			SetupStatistics.Init( args[ 2 ], args[ 3 ], args[ 4 ] );
 			this._buffer = new ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > >();
 			this._period = int.Parse( args[ 0 ] );
@@ -29,6 +30,7 @@ namespace Palantiri.SensorObservers
 			this._maxInstancesToProcess = 10;
 			this._bufferDrainLimit = int.Parse( args[ 1 ] );
 			this.StartListening();
+			Log.Debug( "TelegrafObserver created." );
 		}
 
 		protected void StartListening()
@@ -45,6 +47,7 @@ namespace Palantiri.SensorObservers
 
 		protected void Listen()
 		{
+			Log.Debug( "Start TelegrafObserver listening..." );
 			if( this._buffer != null )
 			{
 				ConcurrentDictionary< CounterAlias, CounterValue > res;
@@ -58,13 +61,23 @@ namespace Palantiri.SensorObservers
 					}
 				}
 
-				for( var i = 0; i < this._maxInstancesToProcess && this._buffer.TryDequeue( out res ); i++ )
+				var valuesinBuffer = this._buffer.Count;
+				for( var i = 0; i < this._maxInstancesToProcess && i < valuesinBuffer; i++ )
 				{
+					this._buffer.TryDequeue( out res );
+					Log.Debug( "Start TelegrafObserver get {valuenum} value from queue({queuelen}).", i, valuesinBuffer );
 					var values = res.ToDictionary( x => x.Key.Alias, y => ( object )y.Value.Value );
 					if( values.Any() )
+					{
+						Log.Debug( "Start TelegrafObserver values sending." );
 						Metrics.Record( "app-sys-counters", values );
+						Log.Debug( "TelegrafObserver values sent successfully." );
+					}
+					else
+						Log.Debug( "TelegrafObserver there are no values." );
 				}
 			}
+			Log.Debug( "End TelegrafObserver listening." );
 		}
 
 		~TelegrafObserver()
@@ -75,7 +88,9 @@ namespace Palantiri.SensorObservers
 
 		public void SendCounters( ConcurrentDictionary< CounterAlias, CounterValue > counters )
 		{
+			Log.Debug( "Start TelegrafObserver receiving  notification..." );
 			this._buffer.Enqueue( counters );
+			Log.Debug( "TelegrafObserver received  notification." );
 		}
 	}
 
