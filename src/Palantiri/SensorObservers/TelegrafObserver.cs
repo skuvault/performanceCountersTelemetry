@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Palantiri.Counters;
 using Serilog;
 using Telegraf;
@@ -69,7 +70,7 @@ namespace Palantiri.SensorObservers
 					var values = res.ToDictionary( x => x.Key.Alias, y => ( object )y.Value.Value );
 					if( values.Any() )
 					{
-						Log.Debug( "Start TelegrafObserver values sending." );
+						Log.Debug( "Start TelegrafObserver values sending... ({values})", JsonConvert.SerializeObject( values ) );
 						Metrics.Record( "app-sys-counters", values );
 						Log.Debug( "TelegrafObserver values sent successfully." );
 					}
