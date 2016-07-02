@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -49,36 +50,43 @@ namespace Palantiri.SensorObservers
 		protected void Listen()
 		{
 			Log.Debug( "Start TelegrafObserver listening..." );
-			if( this._buffer != null )
+			try
 			{
-				ConcurrentDictionary< CounterAlias, CounterValue > res;
-
-				var overflow = this._buffer.Count - this._bufferDrainLimit;
-				if( overflow > 0 )
+				if( this._buffer != null )
 				{
-					for( var j = 0; j < overflow; j++ )
+					ConcurrentDictionary< CounterAlias, CounterValue > res;
+
+					var overflow = this._buffer.Count - this._bufferDrainLimit;
+					if( overflow > 0 )
+					{
+						for( var j = 0; j < overflow; j++ )
+						{
+							this._buffer.TryDequeue( out res );
+						}
+					}
+
+					var valuesinBuffer = this._buffer.Count;
+					for( var i = 0; i < this._maxInstancesToProcess && i < valuesinBuffer; i++ )
 					{
 						this._buffer.TryDequeue( out res );
+						Log.Debug( "Start TelegrafObserver get {valuenum} value from queue({queuelen}).", i, valuesinBuffer );
+						var values = res.ToDictionary( x => x.Key.Alias, y => ( object )y.Value.Value );
+						if( values.Any() )
+						{
+							Log.Debug( "Start TelegrafObserver values sending... ({values})", JsonConvert.SerializeObject( values ) );
+							Metrics.Record( "app-sys-counters", values );
+							Log.Debug( "TelegrafObserver values sent successfully." );
+						}
+						else
+							Log.Debug( "TelegrafObserver there are no values." );
 					}
 				}
-
-				var valuesinBuffer = this._buffer.Count;
-				for( var i = 0; i < this._maxInstancesToProcess && i < valuesinBuffer; i++ )
-				{
-					this._buffer.TryDequeue( out res );
-					Log.Debug( "Start TelegrafObserver get {valuenum} value from queue({queuelen}).", i, valuesinBuffer );
-					var values = res.ToDictionary( x => x.Key.Alias, y => ( object )y.Value.Value );
-					if( values.Any() )
-					{
-						Log.Debug( "Start TelegrafObserver values sending... ({values})", JsonConvert.SerializeObject( values ) );
-						Metrics.Record( "app-sys-counters", values );
-						Log.Debug( "TelegrafObserver values sent successfully." );
-					}
-					else
-						Log.Debug( "TelegrafObserver there are no values." );
-				}
+				Log.Debug( "End TelegrafObserver listening." );
 			}
-			Log.Debug( "End TelegrafObserver listening." );
+			catch( Exception e )
+			{
+				Log.Error( e, "An error on TelegrafObserver listening." );
+			}
 		}
 
 		~TelegrafObserver()
