@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using Palantiri.Console.Arguments;
 using PowerArgs;
+using Serilog;
 
 namespace Palantiri.Console
 {
@@ -8,6 +10,7 @@ namespace Palantiri.Console
 	{
 		static int Main( string[] args )
 		{
+			Log.Information( "Start Palantiri ver:" + Assembly.GetExecutingAssembly().GetName().Version );
 			Args.InvokeAction< Commands >( args );
 			System.Console.WriteLine( "Enter 'Exit' key to Exit" );
 
