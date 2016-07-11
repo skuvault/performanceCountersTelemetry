@@ -96,18 +96,26 @@ namespace Palantiri.Console.Arguments
 		private static Sensor CreateSensorFromJson( CreateSensorAndStartParameters args )
 		{
 			JsonConfig jsonConfig;
+
+			Log.Debug( "Start json parametrs ( " + args.Path + " ) reading..." );
 			using( var r = new StreamReader( args.Path, Encoding.UTF8 ) )
 			{
 				var jsonStr = r.ReadToEnd();
 				jsonConfig = JsonConvert.DeserializeObject< JsonConfig >( jsonStr );
 			}
+			Log.Debug( "End json parametrs ( " + args.Path + " ) reading." );
 
+			Log.Debug( "Start counters parsing..." );
 			var counters = jsonConfig.Counters.SelectMany( x => GetCounterAndAlias( x, null ) ).ToArray();
+			Log.Debug( "End counters parsing." );
+
+			Log.Debug( "Start observers creation..." );
 			var destinations = jsonConfig.Destinations.Select( x =>
 			{
 				var parameters = string.IsNullOrWhiteSpace( x.Parameters ) ? null : Args.Convert( x.Parameters );
 				return x.Name.CreateObserver( parameters );
 			} ).ToArray();
+			Log.Debug( "End observers creation." );
 
 			var sensor = new Sensor( jsonConfig.Period, counters );
 			sensor.AddObservers( destinations );
