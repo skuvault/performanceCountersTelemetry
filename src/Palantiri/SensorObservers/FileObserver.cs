@@ -22,6 +22,7 @@ namespace Palantiri.SensorObservers
 
 		public FileObserver( string fileName )
 		{
+			Log.Debug("Start FileObserver creation...");
 			this._buffer = new ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > >();
 			this._period = 500;
 			this.cts = new CancellationTokenSource();
@@ -63,6 +64,7 @@ namespace Palantiri.SensorObservers
 				}
 			}
 				);
+			Log.Debug("End FileObserver creation.");
 		}
 
 		~FileObserver()
