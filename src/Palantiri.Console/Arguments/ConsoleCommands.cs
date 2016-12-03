@@ -117,7 +117,7 @@ namespace Palantiri.Console.Arguments
 			} ).ToArray();
 			Log.Debug( "End observers creation." );
 
-			var sensor = new Sensor( jsonConfig.Period, counters );
+			var sensor = new Sensor( jsonConfig.Period, jsonConfig.RecreationPeriodMs, counters );
 			sensor.AddObservers( destinations );
 			return sensor;
 		}

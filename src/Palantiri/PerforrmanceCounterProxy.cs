@@ -1,12 +1,15 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Palantiri
 {
 	public class PerforrmanceCounterProxy
 	{
+		private PerformanceCounter _performanceCounter;
+
 		public PerforrmanceCounterProxy( PerformanceCounter counter, string @alias )
 		{
-			this.Counter = counter;
+			this._performanceCounter = counter;
 			this.Alias = alias;
 		}
 
@@ -14,7 +17,38 @@ namespace Palantiri
 		{
 		}
 
-		public PerformanceCounter Counter{ get; private set; }
+		public void ReFresh()
+		{
+			var instanceName = string.Empty;
+			var counterName = string.Empty;
+			var categoryName = string.Empty;
+			try
+			{
+				lock (this)
+				{
+					categoryName = Counter.CategoryName;
+					counterName = Counter.CounterName;
+					instanceName = Counter.InstanceName;
+					this._performanceCounter = PerformanceCounterHelper.GetCounter(categoryName, counterName, instanceName);
+				}
+			}
+			catch ( Exception ex )
+			{
+				Serilog.Log.Error( ex, "Performance Counter {categoryName}//{counterName}//{instanceName} can't be refreshed", categoryName, counterName, instanceName );
+			}
+		}
+
+		public PerformanceCounter Counter
+		{
+			get
+			{
+				lock ( this )
+				{
+					return _performanceCounter;
+				}
+			}
+		}
+
 		public string Alias{ get; private set; }
 
 		public override string ToString()

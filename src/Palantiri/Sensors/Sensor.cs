@@ -23,13 +23,15 @@ namespace Palantiri.Sensors
 		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _countersQueue;
 		protected ConcurrentDictionary< string, string > _countersAlias;
 		protected List< ISensorObserver > _observers;
+		private int _recreationPeriodMs;
 
-		public Sensor( int periodMs, params PerforrmanceCounterProxy[] counters )
+		public Sensor( int periodMs, int recreationPeriodMs, params PerforrmanceCounterProxy[] counters )
 		{
-			this._counters = counters;
-			this._periodMs = periodMs;
-			this._countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
-			this._observers = new List< ISensorObserver >();
+			_counters = counters;
+			_periodMs = periodMs;
+			_recreationPeriodMs = recreationPeriodMs;
+			_countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >();
+			_observers = new List< ISensorObserver >();
 		}
 
 		public void AddObservers( params ISensorObserver[] observers )
@@ -123,6 +125,17 @@ namespace Palantiri.Sensors
 						Task.Delay( this._periodMs ).Wait();
 					}
 				} );
+				this._sensorTask = Task.Factory.StartNew(() =>
+				{
+					while ( this._started && !this._sensorCt.IsCancellationRequested )
+					{
+						Task.Delay( this._recreationPeriodMs ).Wait();
+						Log.Information( "Sensor counters recreation started" );
+						Parallel.ForEach( this._counters, x => x.ReFresh() );
+						Log.Information( "Sensor counters recreation finished" );
+					}
+				}
+				);
 
 				Log.Information( "Sensor started." );
 			}
