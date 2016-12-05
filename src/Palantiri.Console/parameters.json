@@ -1,37 +1,38 @@
 ﻿{
-	"Counters": [
-		{
-			"Category": ".NET CLR Memory",
-			"Name": "% Time in GC",
-			"Instance": "w3wp",
-			"Alias": "cpu-gc-w3wp"
-		},
-		{
-			"Category": ".NET CLR Memory",
-			"Name": "% Time in GC",
-			"Instance": "_Global_",
-			"Alias": "cpu-gc-global"
-		},
-		{
-			"Category": "Processor Information",
-			"Name": "% Processor Time",
-			"Instance": "_Total",
-			"Alias": "cpu-total"
-		}
-	],
+  "Counters": [
+    {
+      "Category": ".NET CLR Memory",
+      "Name": "% Time in GC",
+      "Instance": "w3wp",
+      "Alias": "cpu-gc-w3wp"
+    },
+    {
+      "Category": ".NET CLR Memory",
+      "Name": "% Time in GC",
+      "Instance": "_Global_",
+      "Alias": "cpu-gc-global"
+    },
+    {
+      "Category": "Processor Information",
+      "Name": "% Processor Time",
+      "Instance": "_Total",
+      "Alias": "cpu-total"
+    }
+  ],
 
-	"Destinations": [
-		{
-			"Parameters": "500 1000 environemnt sysName id",
-			"Name": "Telegraf"
-		},
-		{
-			"Parameters": "destination.txt",
-			"Name": "File"
-		}
-	],
+  "Destinations": [
+    {
+      "Parameters": "500 1000 environemnt sysName id",
+      "Name": "Telegraf"
+    },
+    {
+      "Parameters": "destination.txt",
+      "Name": "File"
+    }
+  ],
 
-	"Period": 1000
+  "Period": 1000,
+  "RecreationPeriodMs": 60000 
 
 
 }
