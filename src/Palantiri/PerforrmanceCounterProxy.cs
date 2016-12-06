@@ -26,9 +26,9 @@ namespace Palantiri
 			{
 				lock (this)
 				{
-					categoryName = Counter.CategoryName;
-					counterName = Counter.CounterName;
-					instanceName = Counter.InstanceName;
+					categoryName = this._performanceCounter.CategoryName;
+					counterName = this._performanceCounter.CounterName;
+					instanceName = this._performanceCounter.InstanceName;
 					this._performanceCounter = PerformanceCounterHelper.GetCounter(categoryName, counterName, instanceName);
 				}
 			}
