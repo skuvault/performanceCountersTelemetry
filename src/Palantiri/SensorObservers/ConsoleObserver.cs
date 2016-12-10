@@ -7,12 +7,13 @@ namespace Palantiri.SensorObservers
 {
 	public class ConsoleObserver: ISensorObserver
 	{
-		protected readonly Task _consoleWriter;
-		protected readonly int _period;
-		protected readonly int _maxInstancesToProcess;
-		protected readonly CancellationTokenSource cts;
-		protected readonly CancellationToken ct;
-		protected ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > > _buffer;
+	    protected readonly int _period;
+	    protected readonly CancellationTokenSource cts;
+	    protected readonly CancellationToken ct;
+	    protected readonly int _maxInstancesToProcess;
+
+	    protected readonly Task _consoleWriter;
+	    protected ConcurrentQueue< ConcurrentDictionary< CounterAlias, CounterValue > > _buffer;
 
 		public ConsoleObserver()
 		{
