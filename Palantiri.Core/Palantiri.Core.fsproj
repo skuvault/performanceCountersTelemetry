@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Counters.fs" />
+    <Compile Include="PerformanceCounterProxies.fs" />
+    <Compile Include="PerformanceCounterHelper.fs" />
     <Compile Include="SensorObservable.fs" />
     <None Include="Script.fsx" />
     <Compile Include="SensorObserver.fs" />
