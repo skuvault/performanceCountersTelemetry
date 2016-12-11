@@ -1,19 +1,15 @@
-﻿module SensorObserver
+﻿module SensorObservable
 open System.Collections.Concurrent
 open System.Collections.Generic
 open System.Threading
 open System.Threading.Tasks
 open Counters
+open SensorObserver
 
-type ISensorObserver =
-    abstract member SendCounters: ConcurrentDictionary< CounterAlias, CounterValue > -> unit
-
-type PcHelper() = 
-    static member WriteLineCounter (counters: IDictionary< CounterAlias, CounterValue >) (writer: string -> unit) = 
-        for counter in counters do 
-            System.String.Format( "[{0}]\t[{1}]\t{2}", counter.Value.DateTime.ToString( "yyyy.MM.dd HH:mm:ss.fff"), counter.Key.Alias, counter.Value.Value) |> writer
-    static member WriteLineCounterToConsole (counters: IDictionary< CounterAlias, CounterValue >) = 
-        PcHelper.WriteLineCounter counters ( fun s -> System.Console.WriteLine s)
+type ISensorObservable =
+    abstract member AddObservers: ISensorObserver[] -> unit
+    abstract member RemoveObserver: ISensorObserver -> unit
+    abstract member NotifyObservers: ConcurrentDictionary< CounterAlias, CounterValue > -> unit
 
 type ConsoleObserver() = 
     let _period = 500
@@ -39,10 +35,3 @@ type ConsoleObserver() =
         member this.Dispose() = 
          if _consoleWriter <> null && _cts <> null && _cts.IsCancellationRequested then
             _cts.Cancel()
-
-type ObserverFactory() =
-    static member CreateObserver (observer:string) (par:string) = 
-        let consoleObserver = null
-        match observer.ToLowerInvariant() with
-        | "console" -> null
-        | _ -> null
