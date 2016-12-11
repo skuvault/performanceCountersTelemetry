@@ -45,9 +45,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Counters.fs" />
-    <None Include="Script.fsx" />
-    <Compile Include="Sensor.fs" />
     <Compile Include="SensorObservable.fs" />
+    <None Include="Script.fsx" />
+    <Compile Include="SensorObserver.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
