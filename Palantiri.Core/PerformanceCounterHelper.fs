@@ -13,10 +13,7 @@ type PerformanceCounterHelper =
         PerformanceCounterHelper.WriteLineCounter counters ( fun s -> System.Console.WriteLine s)
     static member PerformanceCounter[] GetCountersOrNull ( instance:string, counterCategory:System.Diagnostics.PerformanceCounterCategory ) = 
         try
-            if System.String.IsNullOrWhiteSpace( instance ) then
-                counterCategory.GetCounters()
-            else
-                counterCategory.GetCounters( instance )
+            if System.String.IsNullOrWhiteSpace( instance ) then counterCategory.GetCounters() else counterCategory.GetCounters( instance )
         with
         | _ as ex
             -> null
