@@ -11,3 +11,14 @@ type PerformanceCounterHelper =
             System.String.Format( "[{0}]\t[{1}]\t{2}", counter.Value.DateTime.ToString( "yyyy.MM.dd HH:mm:ss.fff"), counter.Key.Alias, counter.Value.Value) |> writer
     static member WriteLineCounterToConsole (counters: IDictionary< CounterAlias, CounterValue >) = 
         PerformanceCounterHelper.WriteLineCounter counters ( fun s -> System.Console.WriteLine s)
+    static member PerformanceCounter[] GetCountersOrNull ( instance:string, counterCategory:System.Diagnostics.PerformanceCounterCategory ) = 
+        try
+            if System.String.IsNullOrWhiteSpace( instance ) then
+                counterCategory.GetCounters()
+            else
+                counterCategory.GetCounters( instance )
+        with
+        | _ as ex
+            -> null
+
+        
