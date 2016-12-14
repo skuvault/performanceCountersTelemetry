@@ -7,5 +7,5 @@ type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, al
     
     member this.Counter
         with get() = lock this (fun () -> _performanceCounter)
-    member this.ReFresh = () (* lock this ( fun () -> *)
-                                       (* _performanceCounter = PerformanceCounterHelper *)
+    //member this.ReFresh =  lock this ( fun () -> 
+    //                                    _performanceCounter = PerformanceCounterHelper 

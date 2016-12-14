@@ -4,16 +4,10 @@ open System.Collections.Generic
 open System.Threading
 open System.Threading.Tasks
 open Counters
+open PerformanceCounterHelper
 
 type ISensorObserver =
     abstract member SendCounters: ConcurrentDictionary< CounterAlias, CounterValue > -> unit
-
-type PcHelper() = 
-    static member WriteLineCounter (counters: IDictionary< CounterAlias, CounterValue >) (writer: string -> unit) = 
-        for counter in counters do 
-            System.String.Format( "[{0}]\t[{1}]\t{2}", counter.Value.DateTime.ToString( "yyyy.MM.dd HH:mm:ss.fff"), counter.Key.Alias, counter.Value.Value) |> writer
-    static member WriteLineCounterToConsole (counters: IDictionary< CounterAlias, CounterValue >) = 
-        PcHelper.WriteLineCounter counters ( fun s -> System.Console.WriteLine s)
 
 type ConsoleObserver() = 
     let _period = 500
@@ -27,7 +21,7 @@ type ConsoleObserver() =
                     let mutable temp = new ConcurrentDictionary< CounterAlias, CounterValue >()
                     seq { for x in 1 .. _maxInstancesToProcess -> if _buffer.TryDequeue( &temp ) then Some( temp ) else None }
                     |> Seq.takeWhile ( fun x -> x <> Option.None )
-                    |> Seq.iter ( fun x -> PcHelper.WriteLineCounterToConsole(x.Value))
+                    |> Seq.iter ( fun x -> PerformanceCounterHelper.WriteLineCounterToConsole(x.Value))
                 Task.Delay(100).Wait()
                 )
 
