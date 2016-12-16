@@ -24,28 +24,25 @@ type PerformanceCounterHelper =
             -> null
     static member GetCounter ( category: string, counterName: string, instance : string ) = 
         let logWarnCounterNotFound (name:string) (instance:string) (category:string) = if instance = null then Log.Warning ( "Counter {name} not found in category {category}", counterName, category) else Log.Warning ("Counter {name}({instance}) not found in category {category}", counterName, instance, category)
-        let getCounterAndLog (name:string) (instance:string) (category:PerformanceCounterCategory) = 
+        let getCounterOrNull (name:string) (instance:string) (category:PerformanceCounterCategory) : PerformanceCounter = 
             let instanceCounters = PerformanceCounterHelper.GetCountersOrNull instance category 
             if instanceCounters <> null then 
                 let performanceCounters = instanceCounters.FirstOrDefault( fun y -> String.Equals( y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase ) )
                 if performanceCounters = null then
-                    logWarnCounterNotFound counterName instance category.CategoryName ; null
-                else
-                    performanceCounters
+                    logWarnCounterNotFound counterName instance category.CategoryName
+                performanceCounters
             else
-                logWarnCounterNotFound counterName instance category.CategoryName
-                null
+                logWarnCounterNotFound counterName instance category.CategoryName; null
         let getCategoryAndCounter category counterName instance =
             Log.Information("Getting counter: {category}\\{name}\\{instance} ",  category, counterName, instance)
             let counterCategory = PerformanceCounterCategory.GetCategories().FirstOrDefault( fun x -> String.Equals( x.CategoryName, category, StringComparison.InvariantCultureIgnoreCase ) )
             if counterCategory <> null  then
                 match counterCategory.CategoryType with
-                | PerformanceCounterCategoryType.MultiInstance -> getCounterAndLog counterName instance counterCategory
-                | PerformanceCounterCategoryType.SingleInstance -> getCounterAndLog counterName null counterCategory
+                | PerformanceCounterCategoryType.MultiInstance -> getCounterOrNull counterName instance counterCategory
+                | PerformanceCounterCategoryType.SingleInstance -> getCounterOrNull counterName null counterCategory
                 | _ -> null
             else
-                Serilog.Log.Warning ( "Category not found: {category}", category )
-                null
+                Serilog.Log.Warning ( "Category not found: {category}", category ); null
 
         let result = getCategoryAndCounter category counterName instance
         if result = null then Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance ) else Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance )
