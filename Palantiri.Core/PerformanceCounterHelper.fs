@@ -24,15 +24,13 @@ type PerformanceCounterHelper =
             -> null
     static member GetCounter ( category: string, counterName: string, instance : string ) = 
         let logWarnCounterNotFound (name:string) (instance:string) (category:string) = if instance = null then Log.Warning ( "Counter {name} not found in category {category}", counterName, category) else Log.Warning ("Counter {name}({instance}) not found in category {category}", counterName, instance, category)
+        let sideEffectOnNull act x = if x = null then act(); x else x
         let getCounterOrNull (name:string) (instance:string) (category:PerformanceCounterCategory) : PerformanceCounter = 
             let instanceCounters = PerformanceCounterHelper.GetCountersOrNull instance category 
             if instanceCounters = null then 
                 logWarnCounterNotFound counterName instance category.CategoryName; null
             else
-                let performanceCounters = instanceCounters.FirstOrDefault( fun y -> String.Equals( y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase ) )
-                if performanceCounters = null then
-                    logWarnCounterNotFound counterName instance category.CategoryName
-                performanceCounters
+                instanceCounters.FirstOrDefault( fun y -> String.Equals( y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase ) ) |> sideEffectOnNull ( fun unit -> logWarnCounterNotFound counterName instance category.CategoryName )
         let getCategoryAndCounter category counterName instance =
             Log.Information("Getting counter: {category}\\{name}\\{instance} ",  category, counterName, instance)
             let counterCategory = PerformanceCounterCategory.GetCategories().FirstOrDefault( fun x -> String.Equals( x.CategoryName, category, StringComparison.InvariantCultureIgnoreCase ) )
