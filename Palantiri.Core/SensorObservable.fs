@@ -79,4 +79,10 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
                                             |> Seq.toArray
         Log.Information( "Removing counters..." )
         lock _startLock removeCounters
-        Log.Information( "Counters removed {@counters}.", counters );
+        Log.Information( "Counters removed {@counters}.", counters )
+
+    member this.AddCounters( counters:seq<PerforrmanceCounterProxy> ) = 
+        let addCounters () = _counters <- _counters |> Seq.ofArray |> Seq.append counters |> Seq.toArray
+        Log.Information( "Adding counters..." )
+        lock _startLock addCounters
+        Log.Information( "Counters added: {@counters}.", counters )
