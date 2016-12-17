@@ -69,3 +69,14 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         Log.Information( "Starting sensor..." ) 
         lock _startLock startSensor
         Log.Information( "Sensor started." )
+
+    member this.RemoveCounters( counters:seq<PerforrmanceCounterProxy> ) (onRemoved: string -> unit) = 
+        let getCounterByAlias ( cntrs:seq<PerforrmanceCounterProxy> ) (alias: string) = cntrs |> Seq.tryFind (fun cntr -> cntr.Alias = alias)
+        let removeCounters () = _counters <- _counters 
+                                            |> Seq.filter (fun _c ->    let shouldBeRemoved = ( getCounterByAlias counters _c.Alias ) <> None
+                                                                        if shouldBeRemoved then Log.Information( "Counter marked for remove: {@counter}.", _c ); onRemoved _c.Alias
+                                                                        not shouldBeRemoved)
+                                            |> Seq.toArray
+        Log.Information( "Removing counters..." )
+        lock _startLock removeCounters
+        Log.Information( "Counters removed {@counters}.", counters );
