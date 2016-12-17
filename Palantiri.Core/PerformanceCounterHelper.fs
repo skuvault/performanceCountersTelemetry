@@ -8,12 +8,14 @@ open System.Linq
 open System
 open Serilog
 open Counters
+open Sensor
 open PerformanceCounterProxies
 
 type PerformanceCounterHelper = 
+    static member SideEffectOnNull act x = if x = null then act(); x else x
     static member WriteLineCounter (counters: IDictionary< CounterAlias, CounterValue >) (writer: string -> unit) = 
         for counter in counters do 
-            System.String.Format( "[{0}]\t[{1}]\t{2}", counter.Value.DateTime.ToString( "yyyy.MM.dd HH:mm:ss.fff"), counter.Key.Alias, counter.Value.Value) |> writer
+            System.String.Format( "[{0}]\t[{1}]\t{2}", counter.Value.DateTime.ToString( "yyyy.MM.dd HH:mm:ss.fff"),counter.Key.Alias, counter.Value.Value) |> writer
     static member WriteLineCounterToConsole (counters: IDictionary< CounterAlias, CounterValue >) = 
         PerformanceCounterHelper.WriteLineCounter counters ( fun s -> System.Console.WriteLine s)
     static member GetCountersOrNull ( instance:string)( counterCategory:PerformanceCounterCategory ) = 
@@ -24,14 +26,13 @@ type PerformanceCounterHelper =
             -> null
     static member GetCounter ( category: string, counterName: string, instance : string ) = 
         let logWarnCounterNotFound (name:string) (instance:string) (category:string) = if instance = null then Log.Warning ( "Counter {name} not found in category {category}", counterName, category) else Log.Warning ("Counter {name}({instance}) not found in category {category}", counterName, instance, category)
-        let sideEffectOnNull act x = if x = null then act(); x else x
         let sideEffectOnNotNull act x = if x <> null then act(); x else x
         let getCounterOrNull (name:string) (instance:string) (category:PerformanceCounterCategory) : PerformanceCounter = 
             let instanceCounters = PerformanceCounterHelper.GetCountersOrNull instance category 
             if instanceCounters = null then 
                 logWarnCounterNotFound counterName instance category.CategoryName; null
             else
-                instanceCounters.FirstOrDefault( fun y -> String.Equals( y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase ) ) |> sideEffectOnNull ( fun unit -> logWarnCounterNotFound counterName instance category.CategoryName )
+                instanceCounters.FirstOrDefault( fun y -> String.Equals( y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase ) ) |> PerformanceCounterHelper.SideEffectOnNull ( fun unit -> logWarnCounterNotFound counterName instance category.CategoryName )
         let getCategoryAndCounter category counterName instance =
             Log.Information("Getting counter: {category}\\{name}\\{instance} ",  category, counterName, instance)
             let counterCategory = PerformanceCounterCategory.GetCategories().FirstOrDefault( fun x -> String.Equals( x.CategoryName, category, StringComparison.InvariantCultureIgnoreCase ) )
@@ -43,6 +44,16 @@ type PerformanceCounterHelper =
                 | PerformanceCounterCategoryType.SingleInstance -> getCounterOrNull counterName null counterCategory
                 | _ -> null
 
-        getCategoryAndCounter category counterName instance 
-        |> sideEffectOnNull (fun unit ->Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance )) 
-        |> sideEffectOnNotNull (fun unit ->Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance ))
+        getCategoryAndCounter category counterName instance |> PerformanceCounterHelper.SideEffectOnNull (fun unit ->Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance )) 
+                                                            |> sideEffectOnNotNull (fun unit ->Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance ))
+    
+    static member GetCounters ( counters: seq<string[]>, onNotFound : string->string->string->unit ) = 
+        Serilog.Log.Debug ( "Start getting counters..." )
+        let getAlias = 
+            Sensor.Ge
+        let convertNamesToCounterProxy categoryName counterName instance = 
+            let pc = PerformanceCounterHelper.GetCounter categoryName counterName instance 
+            let pc2 = pc|> PerformanceCounterHelper.SideEffectOnNull (fun unit -> if onNotFound <> null then onNotFound categoryName counterName instance )
+            
+        counters |> Seq.map
+
