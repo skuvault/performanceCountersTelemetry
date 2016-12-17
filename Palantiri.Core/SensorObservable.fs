@@ -25,6 +25,8 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
     let mutable _startLock = new System.Object()
     let mutable _started = false
     let mutable _sensorCts = new CancellationTokenSource()
+    let mutable _sensorCt = new CancellationToken()
+    let mutable _sensorTask = new Task(null)
 
     interface ISensorObservable with 
         member this.AddObservers observers = observers |> Seq.iter _observers.Add
@@ -33,7 +35,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
     
     static member GetCounterId (pc:PerformanceCounter) = pc.CategoryName + "_" + pc.CounterName + "_" + pc.InstanceName
     
-    member this.GetCounterValues = 
+    member this.GetCounterValues () = 
         Log.Debug ( "Getting counters values..." )
         let dateTime = System.DateTime.UtcNow
         let getCounterValueAndPutToAcc (state:ConcurrentDictionary< CounterAlias, CounterValue >) (x:PerforrmanceCounterProxy)  = 
@@ -49,11 +51,21 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         Log.Information( "Counters values received." )
         counters
 
-    member this.Stop = 
+    member this.Stop() = 
         Log.Information( "Stopping sensor..." )
-        lock _startLock ( fun ()->  _sensorCts.Cancel(); _started = false |> ignore)
+        lock _startLock ( fun ()->  _sensorCts.Cancel(); _started <- false )
         Log.Information( "Sensor stopped." )
 
-
-
-        
+    member this.Start() = 
+        let readSensorAndNotify () = this.GetCounterValues() |> (this :> ISensorObservable).NotifyObservers; Log.Debug("Sensor observers notified")
+        let readSensorAndNotifyInfinite () = while _started && not _sensorCt.IsCancellationRequested do 
+                                                readSensorAndNotify() 
+                                                Task.Delay( _periodMs ).Wait()
+        let startSensor () = if not _started then
+                                _started <- true
+                                _sensorCts <- new CancellationTokenSource()
+                                _sensorCt <- _sensorCts.Token
+                                _sensorTask <-  Task.Factory.StartNew readSensorAndNotifyInfinite
+        Log.Information( "Starting sensor..." ) 
+        lock _startLock startSensor
+        Log.Information( "Sensor started." )
