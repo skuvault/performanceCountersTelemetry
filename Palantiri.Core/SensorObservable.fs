@@ -22,6 +22,10 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
     let mutable _countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >()
     let mutable _observers = new List< ISensorObserver >()
 
+    let mutable _startLock = new System.Object()
+    let mutable _started = false
+    let mutable _sensorCts = new CancellationTokenSource()
+
     interface ISensorObservable with 
         member this.AddObservers observers = observers |> Seq.iter _observers.Add
         member this.RemoveObserver observer = _observers.Remove observer |> ignore
@@ -44,5 +48,12 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         let counters = _counters |> Seq.fold getCounterValueAndPutToAcc (new ConcurrentDictionary< CounterAlias, CounterValue >())
         Log.Information( "Counters values received." )
         counters
+
+    member this.Stop = 
+        Log.Information( "Stopping sensor..." )
+        lock _startLock ( fun ()->  _sensorCts.Cancel(); _started = false |> ignore)
+        Log.Information( "Sensor stopped." )
+
+
 
         
