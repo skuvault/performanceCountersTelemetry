@@ -25,6 +25,7 @@ type PerformanceCounterHelper =
     static member GetCounter ( category: string, counterName: string, instance : string ) = 
         let logWarnCounterNotFound (name:string) (instance:string) (category:string) = if instance = null then Log.Warning ( "Counter {name} not found in category {category}", counterName, category) else Log.Warning ("Counter {name}({instance}) not found in category {category}", counterName, instance, category)
         let sideEffectOnNull act x = if x = null then act(); x else x
+        let sideEffectOnNotNull act x = if x <> null then act(); x else x
         let getCounterOrNull (name:string) (instance:string) (category:PerformanceCounterCategory) : PerformanceCounter = 
             let instanceCounters = PerformanceCounterHelper.GetCountersOrNull instance category 
             if instanceCounters = null then 
@@ -42,6 +43,6 @@ type PerformanceCounterHelper =
                 | PerformanceCounterCategoryType.SingleInstance -> getCounterOrNull counterName null counterCategory
                 | _ -> null
 
-        let result = getCategoryAndCounter category counterName instance
-        if result = null then Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance ) else Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance )
-        result
+        getCategoryAndCounter category counterName instance 
+        |> sideEffectOnNull (fun unit ->Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance )) 
+        |> sideEffectOnNotNull (fun unit ->Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance ))
