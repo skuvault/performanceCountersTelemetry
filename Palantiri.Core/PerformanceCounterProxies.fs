@@ -9,11 +9,11 @@ open System
 open System.Linq
 open Utilities
 
-type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, alias:string ) = 
+type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, alias:CounterAlias ) = 
     let mutable _performanceCounter = counter
     member this.Alias = alias
     member this.Counter with get() = lock this (fun () -> _performanceCounter)
-    new(counter) = PerforrmanceCounterProxy(counter, null)
+    new(counter) = PerforrmanceCounterProxy( counter, CounterAlias.Empty )
 
     static member GetCountersOrNull ( instance:string )( counterCategory:PerformanceCounterCategory ) = 
         try
