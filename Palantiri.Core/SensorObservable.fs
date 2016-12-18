@@ -5,8 +5,10 @@ open System.Collections
 open System.Diagnostics
 open System.Threading
 open System.Threading.Tasks
+open System
 open Counters
 open PerformanceCounterProxies
+open PerformanceCounterHelper
 open SensorObserver
 open Serilog
 
@@ -86,3 +88,16 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         Log.Information( "Adding counters..." )
         lock _startLock addCounters
         Log.Information( "Counters added: {@counters}.", counters )
+
+    static member GetCounters ( counters: seq<string[]>) (onNotFound : Option<string->string->string->unit> ) = 
+        Log.Debug ( "Start getting counters..." )
+        let getCounterOrNull (cntr:string[]) = 
+            let pc  = PerformanceCounterHelper.GetCounter cntr.[0] cntr.[1] cntr.[2]
+            if pc = null && (onNotFound.IsSome) then onNotFound.Value cntr.[0] cntr.[1] cntr.[2]
+            (pc,cntr)
+
+        let getCounterProxy (perfCounter,cntr:string[]) =   let alias = if cntr.Length > 3 && not (String .IsNullOrWhiteSpace cntr.[3]) then cntr.[3] else Sensor.GetCounterId perfCounter 
+                                                            new PerforrmanceCounterProxy (perfCounter, alias)
+        let result = counters |> Seq.map getCounterOrNull |> Seq.filter (fun (pc,cntr) -> pc <> null) |> Seq.map getCounterProxy
+        Log.Debug( "Counters received" )
+        result
