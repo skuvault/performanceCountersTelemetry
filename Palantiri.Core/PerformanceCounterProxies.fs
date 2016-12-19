@@ -13,6 +13,7 @@ type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, al
     let mutable _performanceCounter = counter
     member this.Alias = alias
     member this.Counter with get() = lock this (fun () -> _performanceCounter)
+                        and set(value) = lock this (fun () -> _performanceCounter <- value)
     new(counter) = PerforrmanceCounterProxy( counter, CounterAlias.Empty )
 
     static member GetCountersOrNull ( instance:string )( counterCategory:PerformanceCounterCategory ) = 
@@ -48,7 +49,7 @@ type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, al
     
     member this.ReFresh () = 
         try
-            lock this ( fun () -> _performanceCounter <- PerforrmanceCounterProxy.GetCounter _performanceCounter.CategoryName _performanceCounter.CounterName _performanceCounter.InstanceName )
+            this.Counter <- PerforrmanceCounterProxy.GetCounter _performanceCounter.CategoryName _performanceCounter.CounterName _performanceCounter.InstanceName
         with
         | _ as ex
             -> Serilog.Log.Error( ex, "Performance Counter {categoryName}//{counterName}//{instanceName} can't be refreshed", _performanceCounter.CategoryName, _performanceCounter.CounterName, _performanceCounter.InstanceName )
