@@ -13,7 +13,7 @@ namespace Palantiri.Sensors
 {
 	public class Sensor: ISensorObservable
 	{
-		protected PerforrmanceCounterProxy[] _counters{ get; set; }
+		protected PerforrmanceCounterProxy[] _counters{ get; set; }//todo: make cuncurrent and recreate counters
 		protected int _periodMs{ get; set; }
 		protected bool _started{ get; set; }
 		protected object _startLock = new object();
