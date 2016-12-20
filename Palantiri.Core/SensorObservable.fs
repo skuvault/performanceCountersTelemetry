@@ -35,7 +35,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         member this.RemoveObserver observer = _observers.Remove observer |> ignore
         member this.NotifyObservers counters = _observers |> Seq.iter (fun o -> o.SendCounters counters)
     
-    static member GetCounterId (pc:PerformanceCounter) = pc.CategoryName + "_" + pc.CounterName + "_" + pc.InstanceName
+    static member GetCounterAlias (pc:PerformanceCounter) = pc.CategoryName + "_" + pc.CounterName + "_" + pc.InstanceName
     
     member this.GetCounterValues () = 
         Log.Debug ( "Getting counters values..." )
@@ -43,7 +43,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         let getCounterValueAndPutToAcc (state:ConcurrentDictionary< CounterAlias, CounterValue >) (x:PerforrmanceCounterProxy)  = 
             try
                 let nextValue = float <| x.Counter.NextValue()
-                state.AddOrUpdate( x.Alias, new CounterValue( dateTime, nextValue ), ( fun cid y -> new CounterValue( dateTime, nextValue ))) |> ignore
+                state.AddOrUpdate( x.Alias, { ActualOn=dateTime; Value=nextValue }, ( fun cid y -> { ActualOn=dateTime; Value=nextValue })) |> ignore
                 Log.Information( "Counter value received: [{alias}][{timepoint}][{value}].", x.Alias, dateTime, nextValue )
                 state
             with
@@ -72,16 +72,16 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         lock _startLock startSensor
         Log.Information( "Sensor started." )
 
-    member this.RemoveCounters( counters:seq<PerforrmanceCounterProxy> ) (onRemoved: CounterAlias -> unit) = 
-        let getCounterByAlias ( cntrs:seq<PerforrmanceCounterProxy> ) (alias: CounterAlias ) = cntrs |> Seq.tryFind (fun cntr -> cntr.Alias = alias)
-        let removeCounters () = _counters <- _counters 
-                                            |> Seq.filter (fun _c ->    let shouldBeRemoved = ( getCounterByAlias counters _c.Alias ) <> None
-                                                                        if shouldBeRemoved then Log.Information( "Counter marked for remove: {@counter}.", _c ); onRemoved _c.Alias
-                                                                        not shouldBeRemoved)
-                                            |> Seq.toArray
-        Log.Information( "Removing counters..." )
-        lock _startLock removeCounters
-        Log.Information( "Counters removed {@counters}.", counters )
+//    member this.RemoveCounters( counters:seq<PerforrmanceCounterProxy> ) (onRemoved: CounterAlias -> unit) = 
+//        let getCounterByAlias ( cntrs:seq<PerforrmanceCounterProxy> ) (alias: CounterAlias ) = cntrs |> Seq.tryFind (fun cntr -> cntr.Alias = alias)
+//        let removeCounters () = _counters <- _counters 
+//                                            |> Seq.filter (fun _c ->    let shouldBeRemoved = ( getCounterByAlias counters _c.Alias ) <> None
+//                                                                        if shouldBeRemoved then Log.Information( "Counter marked for remove: {@counter}.", _c ); onRemoved _c.Alias
+//                                                                        not shouldBeRemoved)
+//                                            |> Seq.toArray
+//        Log.Information( "Removing counters..." )
+//        lock _startLock removeCounters
+//        Log.Information( "Counters removed {@counters}.", counters )
 
     member this.AddCounters( counters:seq<PerforrmanceCounterProxy> ) = 
         let addCounters () = _counters <- _counters |> Seq.ofArray |> Seq.append counters |> Seq.toArray
@@ -89,15 +89,16 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         lock _startLock addCounters
         Log.Information( "Counters added: {@counters}.", counters )
 
-    static member GetCounters ( counters: seq<string[]>) (onNotFound : Option<string->string->string->unit> ) = 
+    static member GetCounters ( counters: seq<CounterFullName*CounterAlias>) (onNotFound : Option<CounterFullName*CounterAlias->unit> ) = 
         Log.Debug ( "Start getting counters..." )
-        let getCounterOrNull (cntr:string[]) = 
-            let pc  = PerforrmanceCounterProxy.GetCounter cntr.[0] cntr.[1] cntr.[2]
-            if pc = null && (onNotFound.IsSome) then onNotFound.Value cntr.[0] cntr.[1] cntr.[2]
-            (pc,cntr)
+        let getCounterOrNull (cFullName,cAlias) = 
+            let pc  = PerforrmanceCounterProxy.GetCounter cFullName
+            if pc = null && (onNotFound.IsSome) then onNotFound.Value (cFullName,cAlias)
+            (pc,cFullName,cAlias)
 
-        let getCounterProxy (perfCounter,cntr:string[]) =   let alias = if cntr.Length > 3 && not (String .IsNullOrWhiteSpace cntr.[3]) then cntr.[3] else Sensor.GetCounterId perfCounter 
-                                                            new PerforrmanceCounterProxy (perfCounter, (CounterAlias.Create alias))
-        let result = counters |> Seq.map getCounterOrNull |> Seq.filter (fun (pc,cntr) -> pc <> null) |> Seq.map getCounterProxy
+//        let getCounterProxy (perfCounter,cntr:string[]) =   let alias = if cntr.Length > 3 && not (String .IsNullOrWhiteSpace cntr.[3]) then cntr.[3] else Sensor.GetCounterAlias perfCounter 
+//                                                            new PerforrmanceCounterProxy (perfCounter, {Alias = alias},{})
+
+        let result = counters |> Seq.map getCounterOrNull |> Seq.filter (fun (pc,fn,a) -> pc <> null) |> Seq.map PerforrmanceCounterProxy.Create
         Log.Debug( "Counters received" )
         result
