@@ -37,7 +37,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
     
     static member GetCounterAlias (pc:PerformanceCounter) = pc.CategoryName + "_" + pc.CounterName + "_" + pc.InstanceName
     
-    member this.GetCounterValues () = 
+    member this.GetCountersValues () = 
         Log.Debug ( "Getting counters values..." )
         let dateTime = System.DateTime.UtcNow
         let getCounterValueAndPutToAcc (state:ConcurrentDictionary< CounterAlias, CounterValue >) (x:PerforrmanceCounterProxy)  = 
@@ -59,8 +59,8 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         Log.Information( "Sensor stopped." )
 
     member this.Start() = 
-        let readSensorAndNotify () = this.GetCounterValues() |> (this :> ISensorObservable).NotifyObservers; Log.Debug("Sensor observers notified")
         let readSensorAndNotifyInfinite () = while _started && not _sensorCt.IsCancellationRequested do 
+        let readSensorAndNotify () = this.GetCountersValues() |> (this :> ISensorObservable).NotifyObservers; Log.Debug("Sensor observers notified")
                                                 readSensorAndNotify() 
                                                 Task.Delay( _periodMs ).Wait()
         let startSensor () = if not _started then
