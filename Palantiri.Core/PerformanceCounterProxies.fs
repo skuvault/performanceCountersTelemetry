@@ -17,16 +17,17 @@ type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, fu
                         and set(value) = lock this (fun () -> _performanceCounter <- value)
 
     new(counter,fullname) = PerforrmanceCounterProxy( counter, fullname, {Alias=null} )
+    
     static member Create (counter, fullname, alias) = new PerforrmanceCounterProxy (counter,fullname,alias)
 
-    static member GetCountersFromCategoryOrNull ( instance:CounterInstance )( counterCategory:PerformanceCounterCategory ) = 
+    static member GetPerformanceCountersFromCategoryOrNull ( instance:CounterInstance )( counterCategory:PerformanceCounterCategory ) = 
         try
             if  instance.Instance = null then counterCategory.GetCounters() else counterCategory.GetCounters( instance.Instance )
         with
         | _ as ex
             -> null
 
-    static member GetCounter ( fname: CounterFullName ) = 
+    static member GetPerformanceCounter ( fname: CounterFullName ) = 
 
         let getCounterInternal ( counterFullName: CounterFullName ) =
             Log.Information("Getting counter: {category}\\{name}\\{instance} ",  counterFullName.Category, counterFullName.Name, counterFullName.Instance)
@@ -34,7 +35,7 @@ type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, fu
             if receivedCategory = null  then
                 Serilog.Log.Warning ( "Category not found: {category}", counterFullName.Category ); null
             else
-                let receivedCounters = PerforrmanceCounterProxy.GetCountersFromCategoryOrNull counterFullName.Instance receivedCategory
+                let receivedCounters = PerforrmanceCounterProxy.GetPerformanceCountersFromCategoryOrNull counterFullName.Instance receivedCategory
                 if receivedCounters = null then 
                     Log.Warning ("Instance not found {name}(instance: {instance}) in category {category}", counterFullName.Name, counterFullName.Instance, counterFullName.Category); null
                 else
@@ -48,7 +49,7 @@ type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, fu
     
     member this.ReFresh () = 
         try
-            this.Counter <- PerforrmanceCounterProxy.GetCounter this.Fullname 
+            this.Counter <- PerforrmanceCounterProxy.GetPerformanceCounter this.Fullname 
         with
         | _ as ex
             -> Serilog.Log.Error( ex, "Performance Counter {category}//{name}//{instance} can't be refreshed", this.Fullname.Category,this.Fullname.Name,this.Fullname.Instance )

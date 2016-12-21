@@ -92,7 +92,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
     static member GetCounters ( counters: seq<CounterFullName*CounterAlias>) (onNotFound : Option<CounterFullName*CounterAlias->unit> ) = 
         Log.Debug ( "Start getting counters..." )
         let getCounterOrNull (cFullName,cAlias) = 
-            let pc  = PerforrmanceCounterProxy.GetCounter cFullName
+            let pc  = PerforrmanceCounterProxy.GetPerformanceCounter cFullName
             if pc = null && (onNotFound.IsSome) then onNotFound.Value (cFullName,cAlias)
             (pc,cFullName,cAlias)
 
