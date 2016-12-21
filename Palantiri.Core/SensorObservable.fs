@@ -70,23 +70,6 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         Log.Information( "Starting sensor..." ) 
         lock _startLock (fun ()-> if startSensor() then Log.Information( "Sensor started." ) else Log.Information( "Sensor started. (Had already started, init skiped)" ))
 
-//    member this.RemoveCounters( counters:seq<PerforrmanceCounterProxy> ) (onRemoved: CounterAlias -> unit) = 
-//        let getCounterByAlias ( cntrs:seq<PerforrmanceCounterProxy> ) (alias: CounterAlias ) = cntrs |> Seq.tryFind (fun cntr -> cntr.Alias = alias)
-//        let removeCounters () = _counters <- _counters 
-//                                            |> Seq.filter (fun _c ->    let shouldBeRemoved = ( getCounterByAlias counters _c.Alias ) <> None
-//                                                                        if shouldBeRemoved then Log.Information( "Counter marked for remove: {@counter}.", _c ); onRemoved _c.Alias
-//                                                                        not shouldBeRemoved)
-//                                            |> Seq.toArray
-//        Log.Information( "Removing counters..." )
-//        lock _startLock removeCounters
-//        Log.Information( "Counters removed {@counters}.", counters )
-
-    member this.AddCounters( counters:seq<PerforrmanceCounterProxy> ) = 
-        let addCounters () = _counters <- _counters |> Seq.ofArray |> Seq.append counters |> Seq.toArray
-        Log.Information( "Adding counters..." )
-        lock _startLock addCounters
-        Log.Information( "Counters added: {@counters}.", counters )
-
     static member GetCounters ( counters: seq<CounterFullName*CounterAlias>) (onNotFound : Option<CounterFullName*CounterAlias->unit> ) = 
         Log.Debug ( "Start getting counters..." )
         let getCounterOrNull (cFullName,cAlias) = 
