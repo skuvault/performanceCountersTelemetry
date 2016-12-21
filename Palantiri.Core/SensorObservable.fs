@@ -25,7 +25,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
     let _observers = new List< ISensorObserver >()
 
     let mutable _startLock = new System.Object()
-    let mutable _started = false
+    (*let mutable _started = false*)
     let mutable _sensorCts = new CancellationTokenSource()
     let mutable _sensorCt = new CancellationToken()
     let mutable _sensorTask = new Task(null)
@@ -55,16 +55,16 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
 
     member this.Stop() = 
         Log.Information( "Stopping sensor..." )
-        lock _startLock ( fun ()->  _sensorCts.Cancel(); _started <- false )
+        lock _startLock ( fun ()->  _sensorCts.Cancel(); (*_started <- false *) )
         Log.Information( "Sensor stopped." )
 
     member this.Start() = 
-        let readSensorAndNotifyInfinite () = while _started && not _sensorCt.IsCancellationRequested do 
         let readSensorAndNotify () = this.GetCountersValues() |> (this :> ISensorObservable).NotifyObservers; Log.Debug("Sensor observers notified")
+        let readSensorAndNotifyInfinite () = while (*_started && *)not _sensorCt.IsCancellationRequested do 
                                                 readSensorAndNotify() 
                                                 Task.Delay( _periodMs ).Wait()
-        let startSensor () = if not _started then
-                                _started <- true
+        let startSensor () = if (* not _started *) _sensorCts.IsCancellationRequested then
+                                (* _started <- true *)
                                 _sensorCts <- new CancellationTokenSource()
                                 _sensorCt <- _sensorCts.Token
                                 _sensorTask <-  Task.Factory.StartNew readSensorAndNotifyInfinite
