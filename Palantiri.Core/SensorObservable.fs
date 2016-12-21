@@ -13,8 +13,8 @@ open SensorObserver
 open Serilog
 
 type ISensorObservable =
-    abstract member AddObservers : ISensorObserver[]-> unit
-    abstract member RemoveObserver: ISensorObserver -> unit
+    abstract member AddObservers : seq<ISensorObserver>-> unit
+    abstract member RemoveObservers: seq<ISensorObserver> -> seq<bool>
     abstract member NotifyObservers: ConcurrentDictionary< CounterAlias, CounterValue > -> unit
 
 type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterProxy[]) =
@@ -32,7 +32,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
 
     interface ISensorObservable with 
         member this.AddObservers observers = observers |> Seq.iter _observers.Add
-        member this.RemoveObserver observer = _observers.Remove observer |> ignore
+        member this.RemoveObservers observers = observers |> Seq.map _observers.Remove
         member this.NotifyObservers counters = _observers |> Seq.iter (fun o -> o.SendCounters counters)
     
     static member GetCounterAlias (pc:PerformanceCounter) = pc.CategoryName + "_" + pc.CounterName + "_" + pc.InstanceName
