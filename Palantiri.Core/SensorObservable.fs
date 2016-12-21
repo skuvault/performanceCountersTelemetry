@@ -66,9 +66,9 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
                                 _sensorCts <- new CancellationTokenSource()
                                 _sensorCt <- _sensorCts.Token
                                 _sensorTask <-  Task.Factory.StartNew readSensorAndNotifyInfinite
+                             _sensorCts.IsCancellationRequested
         Log.Information( "Starting sensor..." ) 
-        lock _startLock startSensor
-        Log.Information( "Sensor started." )
+        lock _startLock (fun ()-> if startSensor() then Log.Information( "Sensor started." ) else Log.Information( "Sensor started. (Had already started, init skiped)" ))
 
 //    member this.RemoveCounters( counters:seq<PerforrmanceCounterProxy> ) (onRemoved: CounterAlias -> unit) = 
 //        let getCounterByAlias ( cntrs:seq<PerforrmanceCounterProxy> ) (alias: CounterAlias ) = cntrs |> Seq.tryFind (fun cntr -> cntr.Alias = alias)
