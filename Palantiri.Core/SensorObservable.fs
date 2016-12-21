@@ -22,7 +22,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
     let mutable _periodMs = periosMs
     let mutable _recreationPeriodMs = recreationPeriodMs
     let mutable _countersQueue = new ConcurrentQueue< ConcurrentDictionary< string, float > >()
-    let mutable _observers = new List< ISensorObserver >()
+    let _observers = new List< ISensorObserver >()
 
     let mutable _startLock = new System.Object()
     let mutable _started = false
