@@ -1,6 +1,7 @@
 ﻿Sensors implemented
 Counters
 +-SebsorObservers (cosole only)
-+-PerforrmanceCounterProxy (refresh)
++- Observable
+PerforrmanceCounterProxy
 PerforrmanceCounterHelper
 
