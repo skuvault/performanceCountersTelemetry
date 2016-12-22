@@ -55,6 +55,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="CommansSets.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <None Include="..\Shared\parameters.json">
