@@ -8,10 +8,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Palantiri.Console", "src\Palantiri.Console\Palantiri.Console.csproj", "{C5683E45-1C13-46C1-AF80-09A266004CA7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{CEEC4703-F015-47D6-B518-4937CEB06E8A}"
-	ProjectSection(SolutionItems) = preProject
-		src\Palantiri.Console\parameters-ru.json = src\Palantiri.Console\parameters-ru.json
-		src\Palantiri.Console\parameters.json = src\Palantiri.Console\parameters.json
-	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Palantiri.Core", "src\Palantiri.Core\Palantiri.Core.fsproj", "{0CDAB58D-546A-4D1A-A456-D8D4AE3CE5B0}"
 EndProject

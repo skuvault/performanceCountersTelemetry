@@ -114,14 +114,20 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Shared\parameters-ru.json">
+      <Link>parameters-ru.json</Link>
+    </None>
+    <None Include="..\Shared\parameters.json">
+      <Link>parameters.json</Link>
+    </None>
+    <None Include="..\Shared\start-many-counters-en.bat">
+      <Link>start-many-counters-en.bat</Link>
+    </None>
+    <None Include="..\Shared\start-many-counters-ru.bat">
+      <Link>start-many-counters-ru.bat</Link>
+    </None>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="parameters-ru.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="parameters.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Palantiri\Palantiri.csproj">
