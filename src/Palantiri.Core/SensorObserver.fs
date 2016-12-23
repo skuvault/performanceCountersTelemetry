@@ -35,8 +35,8 @@ type ConsoleObserver() =
             _cts.Cancel()
 
 type ObserverFactory() =
-    static member CreateObserver (observer:string) (par:string) = 
+    static member CreateObserver (observer:string) (par:seq<string>):ISensorObserver = 
         let consoleObserver = null
         match observer.ToLowerInvariant() with
-        | "console" -> null
-        | _ -> null
+        | "console" -> new ConsoleObserver() :> ISensorObserver
+        | _ -> new ConsoleObserver() :> ISensorObserver

@@ -17,7 +17,7 @@ type ISensorObservable =
     abstract member RemoveObservers: seq<ISensorObserver> -> seq<bool>
     abstract member NotifyObservers: ConcurrentDictionary< CounterAlias, CounterValue > -> unit
 
-type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterProxy[]) =
+type Sensor( periosMs:int, recreationPeriodMs:int, counters:seq<PerforrmanceCounterProxy>) =
     let mutable _counters = counters
     let mutable _periodMs = periosMs
     let mutable _recreationPeriodMs = recreationPeriodMs
@@ -70,7 +70,8 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
         Log.Information( "Starting sensor..." ) 
         lock _startLock (fun ()-> if startSensor() then Log.Information( "Sensor started." ) else Log.Information( "Sensor started. (Had already started, init skiped)" ))
 
-    static member GetCounters ( counters: seq<CounterFullName*CounterAlias>) (onNotFound : Option<CounterFullName*CounterAlias->unit> ) = 
+        
+    static member GetCounters (onNotFound : Option<CounterFullName*CounterAlias->unit> ) ( counters: seq<CounterFullName*CounterAlias>)  = 
         Log.Debug ( "Start getting counters..." )
         let getCounterOrNull (cFullName,cAlias) = 
             let pc  = PerforrmanceCounterProxy.GetPerformanceCounter cFullName
@@ -81,5 +82,6 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:PerforrmanceCounterP
 //                                                            new PerforrmanceCounterProxy (perfCounter, {Alias = alias},{})
 
         let result = counters |> Seq.map getCounterOrNull |> Seq.filter (fun (pc,fn,a) -> pc <> null) |> Seq.map PerforrmanceCounterProxy.Create
-        Log.Debug( "Counters received" )
+        Log.Debug( "End getting counters." )
         result
+        
