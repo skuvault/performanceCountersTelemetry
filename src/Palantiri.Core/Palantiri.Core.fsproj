@@ -57,10 +57,10 @@
     <Compile Include="PerformanceCounterHelper.fs" />
     <Compile Include="SensorObserver.fs" />
     <Compile Include="SensorObservable.fs" />
+    <Compile Include="SensorManager.fs" />
     <None Include="Script.fsx" />
     <Content Include="packages.config" />
     <Content Include="Readme.txt" />
-    <Compile Include="SensorManager.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

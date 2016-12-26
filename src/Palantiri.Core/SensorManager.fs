@@ -9,7 +9,7 @@ type SensorManager private () =
     static let instance = SensorManager()
     static let Sensors = List< Sensor >()
     static member GetSingleton = instance
-    member this.AddSensors sensors = Sensors.AddRange<|sensors
+    member this.AddSensors (sensors:seq< Sensor > ) = Sensors.AddRange<|sensors
     member this.GetSensorsCount sensors = Sensors.Count
     member this.GetSensorTask sensors = 
         try

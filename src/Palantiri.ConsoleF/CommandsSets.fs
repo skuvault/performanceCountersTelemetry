@@ -7,6 +7,7 @@ open Newtonsoft.Json
 open System.Text
 open Counters
 open SensorObserver
+open SensorManager
 
 type Destination = {
     [<ArgRequired;  ArgDescription( "Name" );       ArgShortcut( "dn" );    ArgExample( "Telegraf", "Destination Name" )                    >]Name:string;
@@ -46,10 +47,9 @@ type CreateSensorAndStartParameters () =
         (sensor :> ISensorObservable).AddObservers obsrvrs
         sensor
 
-
 [<ArgExceptionBehavior( ArgExceptionPolicy.StandardExceptionHandling )>]
 type Commands() =     
     [<HelpHook; ArgShortcut( "-?" ); ArgDescription( "Shows this help" )>] member val Help = false
-    [<ArgShortcut( "-?" ); ArgDescription( "Shows this help" )>] member this.CreateSensorAndStart (args:CreateSensorAndStartParameters) = (*let s = args.CreateSensor();*) ()
+    [<ArgShortcut( "-?" ); ArgDescription( "Shows this help" )>] member this.CreateSensorAndStart (args:CreateSensorAndStartParameters) = args.CreateSensor() |> (fun x -> x.Start(); Seq.singleton x) |> SensorManager.GetSingleton.AddSensors
         
 
