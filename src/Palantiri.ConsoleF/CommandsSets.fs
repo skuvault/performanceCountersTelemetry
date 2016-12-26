@@ -24,7 +24,10 @@ type JsonConfig = {
     RecreationPeriodMs:int}
 
 type CreateSensorAndStartParameters () = 
-    [<ArgDescription( "JSON file with parameters" ); ArgShortcut( "p" ); ArgExample( "counters.json", "counters" )>] member val Path = ""
+    let mutable path = ""
+    [<ArgDescription( "JSON file with parameters" ); ArgShortcut( "p" ); ArgExample( "counters.json", "counters" )>] member this.Path with public get() = path and public set (value) = path <- value
+
+
     member this.CreateSensor () = 
         Log.Debug( "Start json parametrs ( " + this.Path + " ) reading..." )
         use streamReader = new StreamReader( this.Path, Encoding.UTF8 )
@@ -49,7 +52,8 @@ type CreateSensorAndStartParameters () =
 
 [<ArgExceptionBehavior( ArgExceptionPolicy.StandardExceptionHandling )>]
 type Commands() =     
-    [<HelpHook; ArgShortcut( "-?" ); ArgDescription( "Shows this help" )>] member val Help = false
-    [<ArgShortcut( "-?" ); ArgDescription( "Shows this help" )>] member this.CreateSensorAndStart (args:CreateSensorAndStartParameters) = args.CreateSensor() |> (fun x -> x.Start(); Seq.singleton x) |> SensorManager.GetSingleton.AddSensors
+    let mutable help = false;
+    [<HelpHook; ArgShortcut( "-?" ); ArgDescription( "Shows this help" )>] member this.Help  with public get() = help and public set (value) = help <- value
+    [<ArgShortcut( "start2" );ArgActionMethod; ArgDescription( "Create sensor and start" )>] member this.CreateSensorAndStart (args:CreateSensorAndStartParameters) = args.CreateSensor() |> (fun x -> x.Start(); Seq.singleton x) |> SensorManager.GetSingleton.AddSensors
         
 
