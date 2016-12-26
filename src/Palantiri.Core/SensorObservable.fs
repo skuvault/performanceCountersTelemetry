@@ -27,7 +27,8 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:seq<PerforrmanceCoun
     let mutable _startLock = new System.Object()
     let mutable _sensorCts = new CancellationTokenSource()
     let mutable _sensorCt = new CancellationToken()
-    let mutable _sensorTask = new Task(null)
+    let mutable _sensorTask = Task.CompletedTask
+    let mutable _started = false;
 
     interface ISensorObservable with 
         member this.AddObservers observers = observers |> Seq.iter _observers.Add
@@ -62,11 +63,12 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:seq<PerforrmanceCoun
         let readSensorAndNotifyInfinite () = while not _sensorCt.IsCancellationRequested do 
                                                 readSensorAndNotify() 
                                                 Task.Delay( _periodMs ).Wait()
-        let startSensor () = if _sensorCts.IsCancellationRequested then
+        let startSensor () = if not _started then
                                 _sensorCts <- new CancellationTokenSource()
                                 _sensorCt <- _sensorCts.Token
                                 _sensorTask <-  Task.Factory.StartNew readSensorAndNotifyInfinite
-                             _sensorCts.IsCancellationRequested
+                                _started <- true
+                             _started
         Log.Information( "Starting sensor..." ) 
         lock _startLock (fun ()-> if startSensor() then Log.Information( "Sensor started." ) else Log.Information( "Sensor started. (Had already started, init skiped)" ))
 
