@@ -78,6 +78,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Global\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Counters\CounterAlias.cs" />
     <Compile Include="Counters\CounterCategory.cs" />
     <Compile Include="Counters\CounterInstance.cs" />
