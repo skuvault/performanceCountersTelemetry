@@ -19,6 +19,7 @@ namespace Palantiri.Sensors
 		protected object _startLock = new object();
 		protected CancellationTokenSource _sensorCts;
 		protected Task _sensorTask;
+		protected Task _sensorRefreshTask;
 		protected CancellationToken _sensorCt;
 		protected ConcurrentQueue< ConcurrentDictionary< string, float > > _countersQueue;
 		protected ConcurrentDictionary< string, string > _countersAlias;
@@ -116,20 +117,35 @@ namespace Palantiri.Sensors
 				this._sensorCt = this._sensorCts.Token;
 				this._sensorTask = Task.Factory.StartNew( () =>
 				{
-					while( this._started && !this._sensorCt.IsCancellationRequested )
+					while ( this._started && !this._sensorCt.IsCancellationRequested )
 					{
 						var countersValues = this.GetCounterValues();
 
-						this.NotifyObservers(countersValues);
-						Log.Debug("Sensor observers notified");
-						Task.Delay( this._periodMs ).Wait();
+						this.NotifyObservers( countersValues );
+						Log.Debug( "Sensor observers notified" );
+						try
+						{
+							Task.Delay( this._periodMs ).Wait( this._sensorCt );
+						}
+						catch ( OperationCanceledException e )
+						{
+							Log.Debug( "Cancellation requested" );
+						}
 					}
 				} );
-				this._sensorTask = Task.Factory.StartNew(() =>
+				this._sensorRefreshTask = Task.Factory.StartNew(() =>
 				{
 					while ( this._started && !this._sensorCt.IsCancellationRequested )
 					{
-						Task.Delay( this._recreationPeriodMs ).Wait();
+						try
+						{
+							Task.Delay( this._recreationPeriodMs ).Wait(this._sensorCt);
+						}
+						catch (OperationCanceledException e)
+						{
+							Log.Debug("Cancellation requested");
+							break;
+						}
 						Log.Information( "Sensor counters recreation started" );
 						Parallel.ForEach( this._counters, x => x.ReFresh() );
 						Log.Information( "Sensor counters recreation finished" );
