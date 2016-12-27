@@ -116,6 +116,7 @@
   <ItemGroup>
     <None Include="..\Shared\parameters-ru.json">
       <Link>parameters-ru.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="..\Shared\parameters.json">
       <Link>parameters.json</Link>

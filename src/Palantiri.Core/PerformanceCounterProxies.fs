@@ -9,7 +9,7 @@ open System
 open System.Linq
 open Utilities
 
-type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, fullname:CounterFullName, alias:CounterAlias )  = 
+type PerforrmanceCounterProxy( counter:Option<System.Diagnostics.PerformanceCounter>, fullname:CounterFullName, alias:CounterAlias )  = 
     let mutable _performanceCounter = counter
     member this.Alias = alias
     member this.Fullname = fullname
@@ -28,7 +28,6 @@ type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, fu
             -> null
 
     static member GetPerformanceCounter ( fname: CounterFullName ) = 
-
         let getCounterInternal ( counterFullName: CounterFullName ) =
             Log.Information("Getting counter: {category}\\{name}\\{instance} ",  counterFullName.Category, counterFullName.Name, counterFullName.Instance)
             let receivedCategory = PerformanceCounterCategory.GetCategories().FirstOrDefault( fun x -> String.Equals( x.CategoryName, counterFullName.Category.Category, StringComparison.InvariantCultureIgnoreCase ) )
@@ -41,11 +40,10 @@ type PerforrmanceCounterProxy( counter:System.Diagnostics.PerformanceCounter, fu
                 else
                     receivedCounters.FirstOrDefault( fun y -> String.Equals( y.CounterName, counterFullName.Name.Name, StringComparison.InvariantCultureIgnoreCase ) ) 
                     |> CommonHelper.SideEffectOnNull ( fun unit -> Log.Warning ("Name {name}(instance: {instance}) not found for category {category}", counterFullName.Name, counterFullName.Instance, counterFullName.Category) )
-
         getCounterInternal fname
-        |> CommonHelper.SideEffectOnNull (fun unit ->Log.Warning( "Getting counter failed: {category}\\{name}\\{instance}", fname.Category, fname.Name, fname.Instance )) 
-        |> CommonHelper.SideEffectOnNotNull (fun unit ->Log.Information( "Getting Counter secceed: {category}\\{name}\\{instance}", fname.Category, fname.Name, fname.Instance ))
-    
+            |> CommonHelper.SideEffectOnNull (fun unit ->Log.Warning( "Getting counter failed: {category}\\{name}\\{instance}", fname.Category, fname.Name, fname.Instance )) 
+            |> CommonHelper.SideEffectOnNotNull (fun unit ->Log.Information( "Getting Counter secceed: {category}\\{name}\\{instance}", fname.Category, fname.Name, fname.Instance ))
+            |> (fun x -> if x = null then Option.None else Option.Some(x))
     
     member this.ReFresh () = 
         try

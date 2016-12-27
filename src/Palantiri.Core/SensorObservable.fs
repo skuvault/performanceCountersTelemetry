@@ -28,6 +28,7 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:seq<PerforrmanceCoun
     let mutable _sensorCts = new CancellationTokenSource()
     let mutable _sensorCt = new CancellationToken()
     let mutable _sensorTask = Task.CompletedTask
+    let mutable _refreshTask = Task.CompletedTask
     let mutable _started = false;
 
     interface ISensorObservable with 
@@ -42,14 +43,14 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:seq<PerforrmanceCoun
         let dateTime = System.DateTime.UtcNow
         let getCounterValueAndPutToAcc (state:ConcurrentDictionary< CounterAlias, CounterValue >) (x:PerforrmanceCounterProxy)  = 
             try
-                let nextValue = float <| x.Counter.NextValue()
+                let nextValue = float <| x.Counter.Value.NextValue()//todo: returns sincorrect value, fix it
                 state.AddOrUpdate( x.Alias, { ActualOn=dateTime; Value=nextValue }, ( fun cid y -> { ActualOn=dateTime; Value=nextValue })) |> ignore
                 Log.Information( "Counter value received: [{alias}][{timepoint}][{value}].", x.Alias, dateTime, nextValue )
                 state
             with
             | _ as ex -> Log.Error(ex, "Can't get counter:  "+x.ToString()); state
 
-        let counters = _counters |> Seq.fold getCounterValueAndPutToAcc (new ConcurrentDictionary< CounterAlias, CounterValue >())
+        let counters = _counters |> Seq.filter (fun x -> x.Counter.IsSome ) |>Seq.fold getCounterValueAndPutToAcc (new ConcurrentDictionary< CounterAlias, CounterValue >())
         Log.Information( "Counters values received." )
         counters
 
@@ -63,10 +64,14 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:seq<PerforrmanceCoun
         let readSensorAndNotifyInfinite () = while not _sensorCt.IsCancellationRequested do 
                                                 readSensorAndNotify() 
                                                 Task.Delay( _periodMs ).Wait()
+        let refreshSensorInfinite () = while not _sensorCt.IsCancellationRequested do 
+                                                _counters |> Seq.iter (fun x ->x.ReFresh())
+                                                Task.Delay( _recreationPeriodMs ).Wait()
         let startSensor () = if not _started then
                                 _sensorCts <- new CancellationTokenSource()
                                 _sensorCt <- _sensorCts.Token
                                 _sensorTask <-  Task.Factory.StartNew readSensorAndNotifyInfinite
+                                _refreshTask <-  Task.Factory.StartNew refreshSensorInfinite
                                 _started <- true
                              _started
         Log.Information( "Starting sensor..." ) 
@@ -77,13 +82,12 @@ type Sensor( periosMs:int, recreationPeriodMs:int, counters:seq<PerforrmanceCoun
         Log.Debug ( "Start getting counters..." )
         let getCounterOrNull (cFullName,cAlias) = 
             let pc  = PerforrmanceCounterProxy.GetPerformanceCounter cFullName
-            if pc = null && (onNotFound.IsSome) then onNotFound.Value (cFullName,cAlias)
+            if pc.IsNone && (onNotFound.IsSome) then onNotFound.Value (cFullName,cAlias)
             (pc,cFullName,cAlias)
 
 //        let getCounterProxy (perfCounter,cntr:string[]) =   let alias = if cntr.Length > 3 && not (String .IsNullOrWhiteSpace cntr.[3]) then cntr.[3] else Sensor.GetCounterAlias perfCounter 
 //                                                            new PerforrmanceCounterProxy (perfCounter, {Alias = alias},{})
-
-        let result = counters |> Seq.map getCounterOrNull |> Seq.filter (fun (pc,fn,a) -> pc <> null) |> Seq.map PerforrmanceCounterProxy.Create
+        let counters = counters |> Seq.map getCounterOrNull |> Seq.map PerforrmanceCounterProxy.Create
         Log.Debug( "End getting counters." )
-        result
+        counters
         
