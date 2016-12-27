@@ -35,7 +35,8 @@ namespace Palantiri
 
 			foreach( var counterNameAndAlias in counters )
 			{
-				var performanceCounter = GetCounter( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
+				var counterFullName = new CounterFullName(new CounterName(counterNameAndAlias[1]),new CounterCategory(counterNameAndAlias[0]),new CounterInstance(counterNameAndAlias[2]));
+				var performanceCounter = GetCounter( counterFullName);
 
 				if( performanceCounter == null )
 				{
@@ -48,33 +49,33 @@ namespace Palantiri
 				if( counterNameAndAlias.Length > 3 && !string.IsNullOrWhiteSpace( counterNameAndAlias[ 3 ] ) )
 					alias = counterNameAndAlias[ 3 ];
 
-				yield return new PerforrmanceCounterProxy( performanceCounter, alias );
+				yield return new PerforrmanceCounterProxy(performanceCounter, counterFullName, alias);
 			}
 
 			Log.Debug( "Counters received" );
 		}
 
-		public static PerformanceCounter GetCounter( string category, string counterName, string instance )
+		public static PerformanceCounter GetCounter( CounterFullName cntrFullName )
 		{
-			Log.Information( "Getting counter: {category}\\{name}\\{instance} ", category, counterName, instance );
+			Log.Information( "Getting counter: {category}\\{name}\\{instance} ", cntrFullName.Category.Categpry, cntrFullName.Name.Name, cntrFullName.Instance.Instance );
 			PerformanceCounter res = null;
-			var counterCategory = PerformanceCounterCategory.GetCategories().FirstOrDefault( x => string.Equals( x.CategoryName, category, StringComparison.InvariantCultureIgnoreCase ) );
+			var counterCategory = PerformanceCounterCategory.GetCategories().FirstOrDefault( x => string.Equals( x.CategoryName, cntrFullName.Category.Categpry, StringComparison.InvariantCultureIgnoreCase ) );
 			if( counterCategory != null )
 			{
 				if( counterCategory.CategoryType == PerformanceCounterCategoryType.MultiInstance )
 				{
-					var instanceCounters = GetCountersOrNull( instance, counterCategory );
+					var instanceCounters = GetCountersOrNull( cntrFullName.Instance.Instance, counterCategory );
 
 					if( instanceCounters != null )
 					{
-						var performanceCounters = instanceCounters.FirstOrDefault( y => string.Equals( y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase ) );
+						var performanceCounters = instanceCounters.FirstOrDefault( y => string.Equals( y.CounterName, cntrFullName.Name.Name, StringComparison.InvariantCultureIgnoreCase ) );
 						if( performanceCounters == null )
-							Log.Warning( "Counter {name}({instance}) not found in category {category}", counterName, instance, category );
+							Log.Warning( "Counter {name}({instance}) not found in category {category}", cntrFullName.Name.Name, cntrFullName.Instance.Instance, cntrFullName.Category.Categpry );
 						else
 							res = performanceCounters;
 					}
 					else
-						Log.Warning( "Counter {name}({instance}) not found in category {category}", counterName, instance, category );
+						Log.Warning( "Counter {name}({instance}) not found in category {category}", cntrFullName.Name.Name, cntrFullName.Instance.Instance, cntrFullName.Category.Categpry );
 				}
 				else if( counterCategory.CategoryType == PerformanceCounterCategoryType.SingleInstance )
 				{
@@ -82,23 +83,23 @@ namespace Palantiri
 
 					if( instanceCounters != null )
 					{
-						var performanceCounters = instanceCounters.FirstOrDefault( y => string.Equals( y.CounterName, counterName, StringComparison.InvariantCultureIgnoreCase ) );
+						var performanceCounters = instanceCounters.FirstOrDefault( y => string.Equals( y.CounterName, cntrFullName.Name.Name, StringComparison.InvariantCultureIgnoreCase ) );
 						if( performanceCounters == null )
-							Log.Warning( "Counter {name} not found in category {category}", counterName, category );
+							Log.Warning( "Counter {name} not found in category {category}", cntrFullName.Name.Name, cntrFullName.Category.Categpry );
 						else
 							res = performanceCounters;
 					}
 					else
-						Log.Warning( "Counter {name} not found in category {category}", counterName, category );
+						Log.Warning( "Counter {name} not found in category {category}", cntrFullName.Name.Name, cntrFullName.Category.Categpry );
 				}
 			}
 			else
-				Log.Warning( "Category not found: {category}", category );
+				Log.Warning( "Category not found: {category}", cntrFullName.Category.Categpry );
 
 			if( res == null )
-				Log.Warning( "Counter not found: {category}\\{name}\\{instance}", category, counterName, instance );
+				Log.Warning( "Counter not found: {category}\\{name}\\{instance}", cntrFullName.Category.Categpry, cntrFullName.Name.Name, cntrFullName.Instance.Instance );
 			else
-				Log.Information( "Counter found: {category}\\{name}\\{instance}", category, counterName, instance );
+				Log.Information( "Counter found: {category}\\{name}\\{instance}", cntrFullName.Category.Categpry, cntrFullName.Name.Name, cntrFullName.Instance.Instance );
 			return res;
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Palantiri.Counters;
 
 namespace Palantiri
 {
@@ -7,34 +8,30 @@ namespace Palantiri
 	{
 		private PerformanceCounter _performanceCounter;
 
-		public PerforrmanceCounterProxy( PerformanceCounter counter, string @alias )
+		public PerforrmanceCounterProxy( PerformanceCounter counter, CounterFullName fname,  string @alias )
 		{
 			this._performanceCounter = counter;
 			this.Alias = alias;
+			this.FullName = fname;
 		}
 
-		public PerforrmanceCounterProxy( PerformanceCounter counter ): this( counter, null )
+
+		public PerforrmanceCounterProxy( PerformanceCounter counter, CounterFullName fname ) : this( counter, fname, null )
 		{
 		}
 
 		public void ReFresh()
 		{
-			var instanceName = string.Empty;
-			var counterName = string.Empty;
-			var categoryName = string.Empty;
 			try
 			{
 				lock (this)
 				{
-					categoryName = this._performanceCounter.CategoryName;
-					counterName = this._performanceCounter.CounterName;
-					instanceName = this._performanceCounter.InstanceName;
-					this._performanceCounter = PerformanceCounterHelper.GetCounter(categoryName, counterName, instanceName);
+					this._performanceCounter = PerformanceCounterHelper.GetCounter( this.FullName );
 				}
 			}
 			catch ( Exception ex )
 			{
-				Serilog.Log.Error( ex, "Performance Counter {categoryName}//{counterName}//{instanceName} can't be refreshed", categoryName, counterName, instanceName );
+				Serilog.Log.Error( ex, "Performance Counter {categoryName}//{counterName}//{instanceName} can't be refreshed", FullName.Category, FullName.Name, FullName.Instance );
 			}
 		}
 
@@ -48,6 +45,8 @@ namespace Palantiri
 				}
 			}
 		}
+
+		public CounterFullName FullName { get; private set; }
 
 		public string Alias{ get; private set; }
 
