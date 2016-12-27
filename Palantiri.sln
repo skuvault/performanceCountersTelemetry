@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Palantiri", "src\Palantiri\Palantiri.csproj", "{A39BFCF8-DBE0-4A07-8CC3-3FFBB6C7E937}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Palantiri.Console", "src\Palantiri.Console\Palantiri.Console.csproj", "{C5683E45-1C13-46C1-AF80-09A266004CA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D72C6B01-5BAC-4F80-BF8F-159F2CAC0DCD}"
+	ProjectSection(SolutionItems) = preProject
+		Rreadme.txt = Rreadme.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
