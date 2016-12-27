@@ -13,10 +13,10 @@
       "Alias": "iis-ram"
     },
     {
-      "Category": "Сведения о процессоре",
+      "Category": "Процесс",
       "Name": "% загруженности процессора",
-      "Instance": "_Total",
-      "Alias": ""
+      "Instance": "GitExtensions",
+      "Alias": "gitext"
     },
     {
       "Category": "Сведения о процессоре",

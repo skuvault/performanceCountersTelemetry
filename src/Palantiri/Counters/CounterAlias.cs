@@ -8,5 +8,10 @@
 		{
 			this.Alias = alias;
 		}
+
+		public bool IsEmpty()
+		{
+			return string.IsNullOrWhiteSpace( Alias );
+		}
 	}
 }

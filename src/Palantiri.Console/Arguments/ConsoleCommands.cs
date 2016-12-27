@@ -6,6 +6,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Palantiri.Console.Arguments.Parameters;
 using Palantiri.Console.Arguments.Parameters.JsonModels;
+using Palantiri.Counters;
 using Palantiri.SensorObservers;
 using Palantiri.Sensors;
 using PowerArgs;
@@ -122,9 +123,9 @@ namespace Palantiri.Console.Arguments
 			return sensor;
 		}
 
-		private static PerforrmanceCounterProxy[] GetCounterAndAlias( Counter args, Action< string, string, string > onNotFound )
+		private static PerforrmanceCounterProxy[] GetCounterAndAlias( Counter args, Action<Tuple<CounterFullName, CounterAlias>> onNotFound )
 		{
-			var counter = new List< string[] >() { new[] { args.Category, args.Name, args.Instance, args.Alias } };
+			var counter = new List< Tuple<CounterFullName,CounterAlias> >() { Tuple.Create(new CounterFullName(new CounterName(args.Name), new CounterCategory(args.Category), new CounterInstance(args.Instance)), new CounterAlias(args.Alias)) };
 			var counters = PerformanceCounterHelper.GetCounters( counter, onNotFound ).ToArray();
 			return counters;
 		}

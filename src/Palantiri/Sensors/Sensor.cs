@@ -74,18 +74,17 @@ namespace Palantiri.Sensors
 			Log.Information( "Getting counters values..." );
 			var counters = new ConcurrentDictionary< CounterAlias, CounterValue >();
 			var dateTime = DateTime.UtcNow;
-			Parallel.ForEach( this._counters, x =>
+			Parallel.ForEach( this._counters.Where( x => x.Counter != null ), x =>
 			{
 				try
 				{
 					var nextValue = x.Counter.NextValue();
-					counters.AddOrUpdate( new CounterAlias( x.Alias ), new CounterValue( dateTime, nextValue ), ( cid, y ) => new CounterValue( dateTime, nextValue ) );
+					counters.AddOrUpdate( x.Alias, new CounterValue( dateTime, nextValue ), ( cid, y ) => new CounterValue( dateTime, nextValue ) );
 					Log.Information( "Counter value received: [{alias}][{timepoint}][{value}].", x.Alias, dateTime, nextValue );
 				}
-				catch( Exception ex)
+				catch( Exception ex )
 				{
-
-					Log.Error(ex, "Can't get counter:  "+x.ToString());
+					Log.Error( ex, "Can't get counter: " + x.ToString() );
 				}
 			} );
 
@@ -157,7 +156,7 @@ namespace Palantiri.Sensors
 			}
 		}
 
-		public void RemoveCounters( PerforrmanceCounterProxy[] counters, Action< string > onRemoved )
+		public void RemoveCounters( PerforrmanceCounterProxy[] counters, Action<CounterAlias> onRemoved )
 		{
 			Log.Information( "Removing counters..." );
 			lock( this._startLock )

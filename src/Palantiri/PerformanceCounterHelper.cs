@@ -29,27 +29,28 @@ namespace Palantiri
 		/// <param name="counters">[Category,Instance,CounterName]</param>
 		/// <param name="onNotFound"></param>
 		/// <returns></returns>
-		public static IEnumerable< PerforrmanceCounterProxy > GetCounters( IEnumerable< string[] > counters, Action< string, string, string > onNotFound )
+		public static IEnumerable< PerforrmanceCounterProxy > GetCounters( List<Tuple<CounterFullName, CounterAlias>> counters, Action<Tuple<CounterFullName, CounterAlias>> onNotFound )
 		{
 			Log.Debug( "Start getting counters..." );
 
 			foreach( var counterNameAndAlias in counters )
 			{
-				var counterFullName = new CounterFullName(new CounterName(counterNameAndAlias[1]),new CounterCategory(counterNameAndAlias[0]),new CounterInstance(counterNameAndAlias[2]));
+				var counterFullName = counterNameAndAlias.Item1;
 				var performanceCounter = GetCounter( counterFullName);
 
 				if( performanceCounter == null )
 				{
-					if( onNotFound != null )
-						onNotFound( counterNameAndAlias[ 0 ], counterNameAndAlias[ 1 ], counterNameAndAlias[ 2 ] );
-					continue;
+					onNotFound?.Invoke(counterNameAndAlias);
+					yield return new PerforrmanceCounterProxy(performanceCounter, counterFullName, counterNameAndAlias.Item2);
 				}
+				else
+				{
+					var alias = counterNameAndAlias.Item2 != null && !counterNameAndAlias.Item2.IsEmpty()
+						? counterNameAndAlias.Item2
+						: new CounterAlias(Sensor.GetCounterId(performanceCounter));
 
-				var alias = Sensor.GetCounterId( performanceCounter );
-				if( counterNameAndAlias.Length > 3 && !string.IsNullOrWhiteSpace( counterNameAndAlias[ 3 ] ) )
-					alias = counterNameAndAlias[ 3 ];
-
-				yield return new PerforrmanceCounterProxy(performanceCounter, counterFullName, alias);
+					yield return new PerforrmanceCounterProxy(performanceCounter, counterFullName, alias);
+				}
 			}
 
 			Log.Debug( "Counters received" );

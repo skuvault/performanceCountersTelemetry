@@ -8,7 +8,7 @@ namespace Palantiri
 	{
 		private PerformanceCounter _performanceCounter;
 
-		public PerforrmanceCounterProxy( PerformanceCounter counter, CounterFullName fname,  string @alias )
+		public PerforrmanceCounterProxy( PerformanceCounter counter, CounterFullName fname,  CounterAlias @alias )
 		{
 			this._performanceCounter = counter;
 			this.Alias = alias;
@@ -46,9 +46,10 @@ namespace Palantiri
 			}
 		}
 
+
 		public CounterFullName FullName { get; private set; }
 
-		public string Alias{ get; private set; }
+		public CounterAlias Alias{ get; private set; }
 
 		public override string ToString()
 		{
