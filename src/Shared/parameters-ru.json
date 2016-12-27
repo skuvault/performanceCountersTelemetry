@@ -13,9 +13,9 @@
       "Alias": "iis-ram"
     },
     {
-      "Category": "Сведения о процессоре",
+      "Category": "Процесс",
       "Name": "% загруженности процессора",
-      "Instance": "_Total",
+      "Instance": "GitExtensions",
       "Alias": ""
     },
     {
