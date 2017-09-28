@@ -123,9 +123,9 @@ namespace Palantiri.Console.Arguments
 			return sensor;
 		}
 
-		private static PerforrmanceCounterProxy[] GetCounterAndAlias( Counter args, Action<Tuple<CounterFullName, CounterAlias>> onNotFound )
+		private static PerforrmanceCounterProxy[] GetCounterAndAlias( Counter args, Action<Tuple<CounterFullName, CounterAlias, CounterParameters>> onNotFound )
 		{
-			var counter = new List< Tuple<CounterFullName,CounterAlias> >() { Tuple.Create(new CounterFullName(new CounterName(args.Name), new CounterCategory(args.Category), new CounterInstance(args.Instance)), new CounterAlias(args.Alias)) };
+			var counter = new List< Tuple<CounterFullName,CounterAlias, CounterParameters> >() { Tuple.Create(new CounterFullName(new CounterName(args.Name), new CounterCategory(args.Category), new CounterInstance(args.Instance)), new CounterAlias(args.Alias), new CounterParameters(args.DevideByCpuCoresCount)) };
 			var counters = PerformanceCounterHelper.GetCounters( counter, onNotFound ).ToArray();
 			return counters;
 		}

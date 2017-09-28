@@ -8,15 +8,16 @@ namespace Palantiri
 	{
 		private PerformanceCounter _performanceCounter;
 
-		public PerforrmanceCounterProxy( PerformanceCounter counter, CounterFullName fname,  CounterAlias @alias )
+		public PerforrmanceCounterProxy( PerformanceCounter counter, CounterFullName fname,  CounterAlias @alias, bool devideByCpuCoresCount)
 		{
 			this._performanceCounter = counter;
 			this.Alias = alias;
 			this.FullName = fname;
+			this.DevideByCpuCoresCount = devideByCpuCoresCount;
 		}
 
 
-		public PerforrmanceCounterProxy( PerformanceCounter counter, CounterFullName fname ) : this( counter, fname, null )
+		public PerforrmanceCounterProxy( PerformanceCounter counter, CounterFullName fname, bool devideByCpuCoresCount) : this( counter, fname, null, devideByCpuCoresCount)
 		{
 		}
 
@@ -50,6 +51,8 @@ namespace Palantiri
 		public CounterFullName FullName { get; private set; }
 
 		public CounterAlias Alias{ get; private set; }
+
+		public bool DevideByCpuCoresCount{ get; private set; }
 
 		public override string ToString()
 		{

@@ -4,7 +4,8 @@
       "Category": ".NET CLR Memory",
       "Name": "% Time in GC",
       "Instance": "w3wp",
-      "Alias": "cpu-gc-w3wp"
+      "Alias": "cpu-gc-w3wp",
+      "DevideByCpuCoresCount": true
     },
     {
       "Category": ".NET CLR Memory",

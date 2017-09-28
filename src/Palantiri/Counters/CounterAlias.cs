@@ -14,4 +14,14 @@
 			return string.IsNullOrWhiteSpace( Alias );
 		}
 	}
+
+	public class CounterParameters
+	{
+		public bool DevideByCpuCoresCount { get; private set; }
+
+		public CounterParameters(bool devideByCpuCoresCount)
+		{
+			this.DevideByCpuCoresCount = devideByCpuCoresCount;
+		}
+	}
 }

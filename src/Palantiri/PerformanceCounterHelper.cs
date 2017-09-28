@@ -10,6 +10,8 @@ namespace Palantiri
 {
 	public static class PerformanceCounterHelper
 	{
+		public static int CpuCoresCount = Environment.ProcessorCount;
+
 		static PerformanceCounterHelper()
 		{
 			CreateLoggerFromConfig();
@@ -29,7 +31,7 @@ namespace Palantiri
 		/// <param name="counters">[Category,Instance,CounterName]</param>
 		/// <param name="onNotFound"></param>
 		/// <returns></returns>
-		public static IEnumerable< PerforrmanceCounterProxy > GetCounters( List<Tuple<CounterFullName, CounterAlias>> counters, Action<Tuple<CounterFullName, CounterAlias>> onNotFound )
+		public static IEnumerable< PerforrmanceCounterProxy > GetCounters( List<Tuple<CounterFullName, CounterAlias, CounterParameters>> counters, Action<Tuple<CounterFullName, CounterAlias, CounterParameters>> onNotFound )
 		{
 			Log.Debug( "Start getting counters..." );
 
@@ -41,7 +43,7 @@ namespace Palantiri
 				if( performanceCounter == null )
 				{
 					onNotFound?.Invoke(counterNameAndAlias);
-					yield return new PerforrmanceCounterProxy(performanceCounter, counterFullName, counterNameAndAlias.Item2);
+					yield return new PerforrmanceCounterProxy(performanceCounter, counterFullName, counterNameAndAlias.Item2, counterNameAndAlias.Item3?.DevideByCpuCoresCount??false);
 				}
 				else
 				{
@@ -49,7 +51,7 @@ namespace Palantiri
 						? counterNameAndAlias.Item2
 						: new CounterAlias(Sensor.GetCounterId(performanceCounter));
 
-					yield return new PerforrmanceCounterProxy(performanceCounter, counterFullName, alias);
+					yield return new PerforrmanceCounterProxy(performanceCounter, counterFullName, alias, counterNameAndAlias.Item3?.DevideByCpuCoresCount ?? false);
 				}
 			}
 

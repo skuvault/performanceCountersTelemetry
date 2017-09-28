@@ -78,7 +78,11 @@ namespace Palantiri.Sensors
 			{
 				try
 				{
-					var nextValue = x.Counter.NextValue();
+					var value = x.Counter.NextValue();
+					var nextValue = x.DevideByCpuCoresCount
+						? value / PerformanceCounterHelper.CpuCoresCount
+						: value;
+
 					counters.AddOrUpdate( x.Alias, new CounterValue( dateTime, nextValue ), ( cid, y ) => new CounterValue( dateTime, nextValue ) );
 					Log.Information( "Counter value received: [{alias}][{timepoint}][{value}].", x.Alias, dateTime, nextValue );
 				}

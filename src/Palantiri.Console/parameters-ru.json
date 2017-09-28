@@ -16,7 +16,8 @@
       "Category": "Процесс",
       "Name": "% загруженности процессора",
       "Instance": "GitExtensions",
-      "Alias": "gitext"
+      "Alias": "gitext",
+      "DevideByCpuCoresCount": true 
     },
     {
       "Category": "Сведения о процессоре",

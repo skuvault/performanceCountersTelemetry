@@ -15,5 +15,8 @@ namespace Palantiri.Console.Arguments.Parameters
 
 		[ ArgDescription( "Alias" ), ArgShortcut( "a" ) ]
 		public string Alias{ get; set; }
+
+		[ArgDescription("DevideByCpuCoresCount"), ArgShortcut("dbccc")]
+		public bool DevideByCpuCoresCount { get; set; }
 	}
 }
